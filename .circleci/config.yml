@@ -1,149 +1,37 @@
+# JavaScript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
 version: 2
-
-environment: &environment
-  AWS_ACCESS_KEY_ID: hi
-  AWS_REGION: us-east-1
-  AWS_SECRET_ACCESS_KEY: byi
-  CAMO_KEY: secret_key
-  CAMO_SERVER: https://no-server
-  CDN_HOST: cdn-staging.codetree.com
-  CODETREE_TUNNEL: http://localhost:1111
-  DATABASE_URL: postgresql://root:@127.0.0.1:5432
-  DB_POOL: 10
-  DEFAULT_EMAIL_HOST_URL: http://localhost:3000
-  ELASTICSEARCH_URL: http://localhost:9200
-  GITHUB_HOST: https://github.com
-  GITHUB_KEY: nothing
-  GITHUB_SECRET: nothing
-  HONEYBADGER_API_KEY: nothing
-  HONEYBADGER_ENV: test
-  INTERCOM_SECRET_KEY: bye
-  LANG: en_US.UTF-8
-  LD_PRELOAD: /usr/lib/x86_64-linux-gnu/libjemalloc.so
-  LOG_LEVEL: WARN
-  MAX_THREADS: 2
-  MAX_WEB_MEM_SIZE: 500
-  MAX_WORKER_MEM_SIZE: 500
-  PUSHER_KEY: hi
-  PUSHER_URL: http://localhost/apps/121443
-  RAILS_ENV: test
-  RAILS_SERVE_STATIC_FILES: enabled
-  REDIS_QUEUE_URI: redis://127.0.0.1:6379
-  REDIS_SESSION_STORE_URI: redis://127.0.0.1:6379/1
-  REDIS_CACHE_STORE_URI: redis://127.0.0.1:6379/2
-  REFRESHWORKER_CONCURRENCY: 1
-  ROLLING_RESTART_IN_HOURS: 12
-  SECRET_KEY_BASE: notsecret
-  SEGMENT_CLIENT_WRITE_KEY: notsecret
-  SEGMENT_SERVER_WRITE_KEY: notsecret
-  SMTP_HOST: smtp.sparkpostmail.com
-  SMTP_PASSWORD: secret_key
-  SMTP_PORT: 587
-  SMTP_USERNAME: secret_user
-  SPLIT_IO_API_KEY: nothing
-  SPLIT_IO_RELOAD_RATE_IN_SECONDS: 5
-  STRIPE_PUBLIC_KEY: not_secret
-  STRIPE_SECRET_KEY: secret_key
-  S3_BUCKET: codetreeusercontent-development
-  TESTOPTS: --verbose
-  TOKEN_ENCRYPTION_KEY: AAAAA*****NeedsToBe32Characters*****AAAAA
-  WEB_CONCURRENCY: 2
-  WORKER_CONCURRENCY: 1
-  WORKER_DEPLOY_ENV: false
-  EB_WORKER_ENVIRONMENT: false
-
 jobs:
-  build_and_functional_test:
-    working_directory: ~/repos/codetree
-
+  build:
     docker:
-      - image: codetreeio/codetree:1.5.2
-        environment:
-          <<: *environment
+      # specify the version you desire here
+      - image: circleci/node:7.10
 
-      - image: circleci/postgres:9.6.2-alpine
-        environment:
-          POSTGRES_USER: root
-          POSTGRES_DB: codetree_test
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
 
-      - image: circleci/redis:5-alpine
+    working_directory: ~/repo
 
     steps:
       - checkout
 
-      - run:
-          name: check_dependencies
-          command: |
-            bundle -v
-            bundle exec ruby -v
-            node -v
-            npm -v
-            MALLOC_CONF=stats_print:true ruby -e "exit"
-
+      # Download and cache dependencies
       - restore_cache:
           keys:
-            - ruby-2.6.4-gem-cache-{{ arch }}-{{ checksum "Gemfile.lock" }}
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
 
-      - run:
-          name: install_gems
-          command: bundle install && bundle clean
+      - run: yarn install
 
       - save_cache:
-          key: ruby-2.6.4-gem-cache-{{ arch }}-{{ checksum "Gemfile.lock" }}
           paths:
-            - ~/.bundle
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run:
-          name: database_setup
-          command: bundle exec rake db:drop db:create db:schema:load db:migrate
-
-      - run:
-          name: run_functional_tests
-          command: bundle exec rake test
-          when: always
-
-      - store_test_results:
-          path: test/reports
-
-  feature_tests:
-    docker:
-      # the Docker image with Cypress dependencies
-      - image: cypress/base:10
-        environment:
-          ## this enables colors in the output
-          TERM: xterm
-    working_directory: ~/app
-    parallelism: 1
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v2-deps-{{ arch }}-{{ checksum "package-lock.json" }}
-      - run: npm ci
-      - save_cache:
-          key: v2-deps-{{ arch }}-{{ checksum "package-lock.json" }}
-          paths:
-            - ~/.npm
-            - ~/.cache
-      - run:
-          name: wait_on_staging_server
-          command: URL=https://staging.codetree.com/pricing; RESPONSE=1; while [ $RESPONSE -ne 200 ]; do echo "waiting on $URL"; sleep 15; RESPONSE=$(curl --write-out "%{http_code}\n" --silent --output /dev/null  "$URL"); done;
-      - run:
-          name: e2e_regression_testing
-          command: npm run cy:run
-
-workflows:
-  version: 2
-  build_and_test:
-    jobs:
-      - build_and_functional_test
-  regression_test:
-    jobs:
-      - feature_tests:
-          filters:
-            branches:
-              ignore:
-                - /.*/
-            tags:
-              only:
-                - /^aws-codepipeline-trigger$/
+      # run tests!
+      - run: yarn test
