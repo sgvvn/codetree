@@ -114,7 +114,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     // cy.get('input#name').as('nameInputText').should('contain.value', random);
     // cy.get('@nameInputText').click().clear()
     // cy.get('@nameInputText').should('have.value', '');
-    // cy.get('input.button').last().should('have.value', 'Save Label').as('saveLableButton').click();
+     cy.get('input.button').last().should('have.value', 'Save Label').as('saveLableButton').click();
     // cy.get('@nameInputText').next('div').should('contain', 'Please enter a name');
     // cy.get('@nameInputText').type('Updated ' + random);
     // cy.get('@nameInputText').should('contain.value',random);
