@@ -118,7 +118,8 @@ describe('Codetree : Add Label Functionality Tests', () => {
     // cy.get('@nameInputText').next('div').should('contain', 'Please enter a name');
     // cy.get('@nameInputText').type('Updated ' + random);
     // cy.get('@nameInputText').should('contain.value',random);
-    cy.get('input#color').as('colorInputText').clear();
+    cy.get('input[class="text-field color-hex"]').as('colorInputText')
+    cy.get('@colorInputText').click().clear();
     cy.get('@colorInputText').should('have.value', '');
     cy.get('@colorInputText').type('#fbca04');
     cy.get('@colorInputText').should('contain.value', '#fbca04');
