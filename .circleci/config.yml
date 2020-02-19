@@ -6,15 +6,20 @@ version: 2
 jobs:
   build:
     docker:
-      # the Docker image with Cypress dependencies
+      # specify the version you desire here
       - image: cypress/base:10
-        environment:
-          ## this enables colors in the output
-          TERM: xterm
-    working_directory: ~/app
-    parallelism: 1
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
+
+    working_directory: ~/repo
+
     steps:
       - checkout
+
+      # Download and cache dependencies
       - restore_cache:
           keys:
             - v2-deps-{{ arch }}-{{ checksum "package-lock.json" }}
@@ -24,9 +29,8 @@ jobs:
           paths:
             - ~/.npm
             - ~/.cache
-      - run:
-          name: wait_on_staging_server
-          command: URL=https://staging.codetree.com/pricing; RESPONSE=1; while [ $RESPONSE -ne 200 ]; do echo "waiting on $URL"; sleep 15; RESPONSE=$(curl --write-out "%{http_code}\n" --silent --output /dev/null  "$URL"); done;
+
+      # run tests!
       - run:
           name: e2e_regression_testing
           command: npm run cy:run
