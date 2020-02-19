@@ -18,7 +18,6 @@ describe('Codetree : Add Label Functionality Tests', () => {
     sidestep_login(user.publicId);
     cy.get('.sidebar').should('be.visible');
     cy.route('GET','/projects/*/views?include_counts=true&scope=labels&view_type=').as('verifydeletlabel');
-    //cy.route('GET', '/projects/*/labels?_pjax=[data-pjax-container]').as('verifydeletlabel');
     cy.route('GET', '/projects/*/cards/*?filter={}').as('verifyCreateIssue');
     cy.route("GET", '/projects/*/cards/*?filter={"type":"epic"}').as('verifyEpic');
     cy.route("GET", '/projects/*/board?type=epic&_pjax=[data-pjax-container]').as('addEpics');
@@ -113,7 +112,8 @@ describe('Codetree : Add Label Functionality Tests', () => {
       expect($lis, 'Title of Window').contain('Edit Label')
     })
     cy.get('input#name').as('nameInputText').should('contain.value', random);
-    cy.get('@nameInputText').click().clear().should('have.value', '');
+    cy.get('@nameInputText').click().clear()
+    cy.get('@nameInputText').should('have.value', '');
     cy.get('input.button').last().should('have.value', 'Save Label').as('saveLableButton').click();
     cy.get('@nameInputText').next('div').should('contain', 'Please enter a name');
     cy.get('@nameInputText').type('Updated ' + random);
@@ -136,7 +136,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.get('tbody tr td.col-name').should('not.contain', random);
   })
 
-  it('verify deleted lable removed from created issue CRLB_012', () => {
+  it('verify deleted lable removed from created issue and change stage done CRLB_012', () => {
     cy.get('div[data-id="backlog"] ul.issue-labels').children().should('have.length', 0)
     cy.get('div[data-id="backlog"] .board-card-details h3').contains(random).click();
     cy.wait('@editIssue');
@@ -145,7 +145,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.wait('@moveIssueDone');
   })
 
-  it('verify deleted lable removed from created epic CRLB_013', () => {
+  it('verify deleted lable removed from created epic and change stage done CRLB_013', () => {
     clickOn('//span[contains(text(),"Epics")]');
     cy.wait('@addEpics');
     cy.get('div[data-id="backlog"] ul.issue-labels').children().should('have.length', 0)
