@@ -111,19 +111,20 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.get('h4.modal-title').should(($lis) => {
       expect($lis, 'Title of Window').contain('Edit Label')
     })
-    cy.get('input#name').as('nameInputText').should('contain.value', random);
-    cy.get('@nameInputText').click().clear()
-    cy.get('@nameInputText').should('have.value', '');
-    cy.get('input.button').last().should('have.value', 'Save Label').as('saveLableButton').click();
-    cy.get('@nameInputText').next('div').should('contain', 'Please enter a name');
-    cy.get('@nameInputText').type('Updated ' + random);
+    // cy.get('input#name').as('nameInputText').should('contain.value', random);
+    // cy.get('@nameInputText').click().clear()
+    // cy.get('@nameInputText').should('have.value', '');
+    // cy.get('input.button').last().should('have.value', 'Save Label').as('saveLableButton').click();
+    // cy.get('@nameInputText').next('div').should('contain', 'Please enter a name');
+    // cy.get('@nameInputText').type('Updated ' + random);
+    // cy.get('@nameInputText').should('contain.value',random);
     cy.get('input#color').as('colorInputText').clear();
     cy.get('@colorInputText').should('have.value', '');
     cy.get('@colorInputText').type('#fbca04');
     cy.get('@colorInputText').should('contain.value', '#fbca04');
     cy.get('@saveLableButton').click();
     cy.get('div.flash-tab-container div').first().should('contain', ' Labels updated')
-    cy.get('tbody tr td.col-name').should('contain', 'Updated ' + random);
+   // cy.get('tbody tr td.col-name').should('contain', 'Updated ' + random);
     cy.get('.col-name a').contains(random).parent().prev('td').children().should(($div) => {
       expect($div, 'Red color').to.have.attr('style', "background-color: #fbca04")
     });
