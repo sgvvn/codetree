@@ -117,7 +117,6 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.get('@colorInputText').should('have.value', '');
     cy.get('@colorInputText').type('#fbca04');
     cy.get('@colorInputText').should('contain.value', '#fbca04');
-    cy.get('input.button').last().should('have.value', 'Save Label').as('saveLableButton');
     cy.get('input#name').as('nameInputText').should('contain.value', random);
     cy.get('@nameInputText').click().clear()
     cy.get('@nameInputText').should('have.value', '');
