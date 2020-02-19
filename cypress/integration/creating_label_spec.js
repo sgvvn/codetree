@@ -17,7 +17,8 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.server();
     sidestep_login(user.publicId);
     cy.get('.sidebar').should('be.visible');
-    cy.route('GET', '/projects/*/labels?_pjax=[data-pjax-container]').as('verifydeletlabel');
+    cy.route('GET','/projects/*/views?include_counts=true&scope=labels&view_type=').as('verifydeletlabel');
+    //cy.route('GET', '/projects/*/labels?_pjax=[data-pjax-container]').as('verifydeletlabel');
     cy.route('GET', '/projects/*/cards/*?filter={}').as('verifyCreateIssue');
     cy.route("GET", '/projects/*/cards/*?filter={"type":"epic"}').as('verifyEpic');
     cy.route("GET", '/projects/*/board?type=epic&_pjax=[data-pjax-container]').as('addEpics');
