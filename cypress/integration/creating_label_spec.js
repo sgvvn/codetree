@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 
-import { randomString, clickOn, setTextOn, clickOnElement, clear, sidestep_login } from './util'
+import { randomString, clickOn, setTextOn, clickOnElement, sidestep_login } from './util'
 
 describe('Codetree : Add Label Functionality Tests', () => {
   var random = randomString(4);
@@ -22,6 +22,8 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.route("GET", '/projects/*/cards/*?filter={"type":"epic"}').as('verifyEpic');
     cy.route("GET", '/projects/*/board?type=epic&_pjax=[data-pjax-container]').as('addEpics');
     cy.route('POST', '/projects/*/issues').as('createIssue');
+    cy.route('GET','/projects/*/issues/*/edit').as('editIssue');
+    cy.route('POST','/projects/*/issues/*').as('moveIssueDone');
   })
 
   it('verify fields at create lable page #CRLB_001', () => {
@@ -77,7 +79,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     clickOnElement('div.octicon-wrapper .octicon', "first");
     setTextOn('div.label-menu input.text-field', random)
     cy.get('span.label-menu-label').contains(random).parent().prev('input').click();
-    cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain',random);
+    cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain', random);
     cy.contains('Create Issue').click();
     cy.wait('@createIssue');
     clickOn('button.issue-form-command');
@@ -106,12 +108,11 @@ describe('Codetree : Add Label Functionality Tests', () => {
   it('verify created label edit successfully CRLB_005 CRLB_006', () => {
     clickOn('//span[contains(text(),"Labels")]');
     cy.get('.col-name a').contains(random).parent().next('td').children().first().click();
-    
     cy.get('h4.modal-title').should(($lis) => {
       expect($lis, 'Title of Window').contain('Edit Label')
     })
-    cy.get('input#name').as('nameInputText').should('contain.value',random);
-    cy.get('@nameInputText').click().clear().should('have.value','');
+    cy.get('input#name').as('nameInputText').should('contain.value', random);
+    cy.get('@nameInputText').click().clear().should('have.value', '');
     cy.get('input.button').last().should('have.value', 'Save Label').as('saveLableButton').click();
     cy.get('@nameInputText').next('div').should('contain', 'Please enter a name');
     cy.get('@nameInputText').type('Updated ' + random);
@@ -123,7 +124,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.get('.col-name a').contains(random).parent().prev('td').children().should(($div) => {
       expect($div, 'Red color').to.have.attr('style', "background-color: #fbca04")
     });
-    })
+  })
 
   it('verify created label delete successfully CRLB_007 CRLB_008', () => {
     clickOn('//span[contains(text(),"Labels")]');
@@ -136,12 +137,21 @@ describe('Codetree : Add Label Functionality Tests', () => {
 
   it('verify deleted lable removed from created issue CRLB_012', () => {
     cy.get('div[data-id="backlog"] ul.issue-labels').children().should('have.length', 0)
+    cy.get('div[data-id="backlog"] .board-card-details h3').contains(random).click();
+    cy.wait('@editIssue');
+    cy.xpath('//span[contains(text(),"Untriaged")]').last().click({ force: true });
+    cy.get('input#stage_done').last().click();
+    cy.wait('@moveIssueDone');
   })
 
   it('verify deleted lable removed from created epic CRLB_013', () => {
     clickOn('//span[contains(text(),"Epics")]');
     cy.wait('@addEpics');
     cy.get('div[data-id="backlog"] ul.issue-labels').children().should('have.length', 0)
+    cy.get('div[data-id="backlog"] .board-card-details h3').contains(random).click();
+    cy.wait('@editIssue');
+    cy.xpath('//span[contains(text(),"Untriaged")]').last().click({ force: true });
+    cy.get('input#stage_done').last().click();
   })
 
 })
