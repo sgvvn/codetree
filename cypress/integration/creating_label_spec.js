@@ -110,8 +110,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.get('h4.modal-title').should(($lis) => {
       expect($lis, 'Title of Window').contain('Edit Label')
     })
-    cy.wait(300);
-    cy.get('#name').as('nameInputText').clear();
+    cy.get('input#name').as('nameInputText').clear();
     cy.get('input.button').last().should('have.value', 'Save Label').as('saveLableButton').click();
     cy.get('@nameInputText').next('div').should('contain', 'Please enter a name');
     cy.get('@nameInputText').type('Updated ' + random);
