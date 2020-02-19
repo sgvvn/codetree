@@ -24,6 +24,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.route('POST', '/projects/*/issues').as('createIssue');
     cy.route('GET','/projects/*/issues/*/edit').as('editIssue');
     cy.route('POST','/projects/*/issues/*').as('moveIssueDone');
+    cy.route('POST','/projects/*/labels/*').as('@flashMessage');
   })
 
   it('verify fields at create lable page #CRLB_001', () => {
@@ -119,6 +120,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.get('#color').as('colorInputText').clear();
     cy.get('@colorInputText').type('#fbca04');
     cy.get('@saveLableButton').click();
+    cy.wait('@flashMessage');
     cy.get('div.flash-tab-container div').first().should('contain', ' Labels updated')
     cy.get('tbody tr td.col-name').should('contain', 'Updated ' + random);
     cy.get('.col-name a').contains(random).parent().prev('td').children().should(($div) => {
