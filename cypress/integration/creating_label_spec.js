@@ -24,7 +24,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.route('POST', '/projects/*/issues').as('createIssue');
     cy.route('GET','/projects/*/issues/*/edit').as('editIssue');
     cy.route('POST','/projects/*/issues/*').as('moveIssueDone');
-    cy.route('POST','/projects/*/labels/*').as('@flashMessage');
+    cy.route('POST','/projects/*/labels/*').as('flashMessage');
   })
 
   it('verify fields at create lable page #CRLB_001', () => {
