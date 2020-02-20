@@ -28,7 +28,7 @@ class MilestonePage {
     cy.get('table[data-container="milestones"]').first().as('openMilestones')
     cy.get('table[data-container="milestones"]').last().as('closeMilestones')
     cy.get('@openMilestones').within(() => {
-      cy.get('td.col-milestone a').contains(title).parent().nextAll('td.col-settings a').click();
+      cy.get('td.col-milestone a').contains(title).parent().siblings('td.col-settings').click();
       cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="transition"]').eq(0).click();
       cy.wait('@verifyMilestoneView')
     })
@@ -44,7 +44,7 @@ class MilestonePage {
     cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
     cy.get('table[data-container="milestones"]').first().as('openMilestones')
     cy.get('@openMilestones').within(() => {
-      cy.get('td.col-milestone a').contains(title).parent().siblings('td.col-settings').click();
+      cy.get('td.col-milestone a').contains(title).parent().nextAll('td.col-settings').click();
       cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="delete"]').eq(0).click();
       cy.wait('@verifyMilestoneView')
     })
