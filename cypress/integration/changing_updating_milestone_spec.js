@@ -79,7 +79,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
 
     })
 
-    context('At Close Milestone Window', () => {
+    context.only('At Close Milestone Window', () => {
         before(function () {
             cy.fixture('users.json').as('usersData');
             cy.get('@usersData').then((users) => {
