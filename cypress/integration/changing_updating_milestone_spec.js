@@ -115,7 +115,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
                 cy.get('td.col-due-on').should('be.visible');
                 cy.get('div.progress-bar').should('be.visible');
                 cy.get('td.col-controls').should('contain', 'View Task Board');
-                cy.get('td.col-settings').should('be.visible');
+               // cy.get('td.col-settings').should('be.visible');
             });
         })
 
