@@ -28,7 +28,7 @@ class MilestonePage {
     cy.get('table[data-container="milestones"]').first().as('openMilestones')
     cy.get('table[data-container="milestones"]').last().as('closeMilestones')
     cy.get('@openMilestones').within(() => {
-      cy.get('td.col-milestone a').contains(title).parent().nextAll('td.col-settings').click({force: true});
+      cy.get('td.col-milestone a').contains(title).parent().nextAll('td.col-settings a').click();
       cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="transition"]').eq(0).click();
       cy.wait('@verifyMilestoneView')
     })
