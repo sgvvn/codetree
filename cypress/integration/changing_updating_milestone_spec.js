@@ -115,7 +115,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
                 cy.get('td.col-due-on').should('be.visible');
                 cy.get('div.progress-bar').should('be.visible');
                 cy.get('td.col-controls').should('contain', 'View Task Board');
-               // cy.get('td.col-settings').should('be.visible');
+                cy.get('td.col-settings').should('be.visible');
             });
         })
 
@@ -134,7 +134,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
             })
         })
 
-        it('verify closed milestone move to top functionality', () => {
+        it.only('verify closed milestone move to top functionality', () => {
             cy.get('@closeMilestones').within(() => {
                 cy.get('td.col-milestone a').contains(random).parent().prev('td.col-handle').click();
                 cy.xpath('//span[@aria-expanded="true"]//following::div[@class="dropdown-menu sort-dropdown"]/ul/li/a').should(($ele) => {
