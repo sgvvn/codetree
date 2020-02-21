@@ -5,28 +5,25 @@ const MilestonePage = new (require('../pages/MilestonePage'))();
 describe('Codetree : Changing, Updateing And Deleting Milestones functionality Tests', () => {
     var random = randomString(4);
     var user;
+    before(function () {
+        cy.fixture('users.json').as('usersData');
+        cy.get('@usersData').then((users) => {
+            user = users.grp1Collaborator;
+        })
+    })
+
+    beforeEach(function () {
+        cy.server();
+        sidestep_login(user.publicId);
+        cy.get('.sidebar').should('be.visible');
+        clickOn('//span[contains(text(),"Milestones")]')
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
+        cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
+        cy.get('table[data-container="milestones"]').first().as('openMilestones')
+        cy.get('table[data-container="milestones"]').last().as('closeMilestones')
+    })
+
     context('At Open Milestone Window', () => {
-        before(function () {
-            cy.fixture('users.json').as('usersData');
-            cy.get('@usersData').then((users) => {
-                user = users.grp1Collaborator;
-            })
-        })
-
-        beforeEach(function () {
-            cy.server();
-            sidestep_login(user.publicId);
-            cy.get('.sidebar').should('be.visible');
-            clickOn('//span[contains(text(),"Milestones")]')
-            cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
-
-            cy.route('GET', '/projects/*/milestones').as('verifyMilestone');
-            cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
-            cy.route("GET", '/projects/*/cards/*?filter={"type":"epic"}').as('verifyEpic');
-            cy.route("GET", '/projects/*/board?type=epic&_pjax=[data-pjax-container]').as('addEpics');
-            cy.route('POST', '/projects/*/issues').as('createIssue');
-            cy.get('table[data-container="milestones"]').first().as('openMilestones')
-        })
 
         it('verify created milestone have hamburger, setting, progress bar, due date and View Task Board CHGMIL_001', () => {
             MilestonePage.createMilestone(random);
@@ -73,35 +70,21 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
             })
         })
 
-        it('verify created milestone delete successfully', () => {
-            MilestonePage.deleteMilestone(random);
+        it('verify created milestone close and reopen again functionality', () => {
+            MilestonePage.closeMilestone(random);
+            MilestonePage.reopenMilestone(random);
         })
 
+        it('verify created milestone edit title successfully', () => {
+            MilestonePage.editMilestone(random, 'openMilestone');
+        })
+
+        it('verify created milestone delete successfully', () => {
+            MilestonePage.deleteMilestone(random, 'openMilestone');
+        })
     })
 
     context('At Close Milestone Window', () => {
-        //random ='mvjx';
-        before(function () {
-            cy.fixture('users.json').as('usersData');
-            cy.get('@usersData').then((users) => {
-                user = users.grp1Collaborator;
-            })
-        })
-
-        beforeEach(function () {
-            cy.server();
-            sidestep_login(user.publicId);
-            cy.get('.sidebar').should('be.visible');
-            clickOn('//span[contains(text(),"Milestones")]')
-            cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
-
-            cy.route('GET', '/projects/*/milestones').as('verifyMilestone');
-            cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
-            cy.route("GET", '/projects/*/cards/*?filter={"type":"epic"}').as('verifyEpic');
-            cy.route("GET", '/projects/*/board?type=epic&_pjax=[data-pjax-container]').as('addEpics');
-            cy.route('POST', '/projects/*/issues').as('createIssue');
-            cy.get('table[data-container="milestones"]').last().as('closeMilestones')
-        })
 
         it('verify closed milestone have hamburger, setting, progress bar, due date and View Task Board CHGMIL_001', () => {
             MilestonePage.createMilestone(random);
@@ -149,15 +132,17 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
             })
         })
 
+        it('verify created milestone reopen and close again functionality', () => {
+            MilestonePage.reopenMilestone(random);
+            MilestonePage.closeMilestone(random);
+        })
+
+        it('verify closed milestone edit title successfully', () => {
+            MilestonePage.editMilestone(random, 'closedMileStone');
+        })
+
         it('verify closed milestone delete successfully', () => {
-            cy.get('@closeMilestones').within(() => {
-                cy.get('td.col-milestone a').contains(random).parent().nextAll('td.col-settings').click();
-                cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="delete"]').eq(0).click();
-                cy.wait('@verifyMilestoneView')
-            })
-            cy.get('@closeMilestones').within(() => {
-                cy.get('td.col-milestone a').should('not.contain', random);
-            })
+            MilestonePage.deleteMilestone(random, 'closedMileStone');
         })
     })
 })

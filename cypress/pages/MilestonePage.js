@@ -23,6 +23,37 @@ class MilestonePage {
       cy.get('tr[data-item="milestone"] td.col-due-on').last().should("contain", date)
     })
   }
+
+  editMilestone(title, typeOfMilestone) {
+    if (typeOfMilestone == 'closedMileStone') {
+      cy.get('table[data-container="milestones"]').last().as('milestoneWindow');
+    }
+    else {
+      cy.get('table[data-container="milestones"]').first().as('milestoneWindow');
+    }
+    cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
+    cy.get('@milestoneWindow').within(() => {
+      cy.get('td.col-milestone a').contains(title).parent().siblings('td.col-settings').should('be.visible').click();
+      cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="edit"]').eq(0).click();
+    })
+    cy.get('h4.modal-title').should(($lis) => {
+      expect($lis, 'Title of Window').contain('Edit Milestone')
+    })
+    cy.get('div.form-field.full input#title').as('titleInputText').should('contain.value', title);
+    cy.get('@titleInputText').click().clear()
+    cy.get('@titleInputText').should('have.value', '');
+    cy.get('input.button').last().should('have.value', 'Save Milestone').as('saveMilestoneButton');
+    cy.get('@saveMilestoneButton').click();
+    cy.get('@titleInputText').next('div').should('contain', 'Please enter a title');
+    cy.get('@titleInputText').type('Updated ' + title);
+    cy.get('@titleInputText').should('contain.value', 'Updated ' + title);
+    cy.get('@saveMilestoneButton').click();
+    cy.wait('@verifyMilestoneView')
+    cy.get('@milestoneWindow').within(() => {
+      cy.get('td.col-milestone a').should('contain', 'Updated ' + title);
+    })
+  }
+  
   closeMilestone(title) {
     cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
     cy.get('table[data-container="milestones"]').first().as('openMilestones')
@@ -40,15 +71,38 @@ class MilestonePage {
     })
   }
 
-  deleteMilestone(title) {
+  reopenMilestone(title) {
     cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
     cy.get('table[data-container="milestones"]').first().as('openMilestones')
+    cy.get('table[data-container="milestones"]').last().as('closeMilestones')
+    cy.get('@closeMilestones').within(() => {
+      cy.get('td.col-milestone a').contains(title).parent().siblings('td.col-settings').should('be.visible').click();
+      cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="transition"]').eq(0).click();
+      cy.wait('@verifyMilestoneView')
+    })
+    cy.get('@closeMilestones').within(() => {
+      cy.get('td.col-milestone a').should('not.contain', title);
+    })
     cy.get('@openMilestones').within(() => {
+      cy.get('td.col-milestone a').should('contain', title);
+    })
+  }
+
+  deleteMilestone(title,typeOfMilestone) {
+    if (typeOfMilestone == 'closedMileStone') {
+      cy.get('table[data-container="milestones"]').last().as('milestoneWindow');
+    }
+    else {
+      cy.get('table[data-container="milestones"]').first().as('milestoneWindow');
+    }
+
+    cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
+    cy.get('@milestoneWindow').within(() => {
       cy.get('td.col-milestone a').contains(title).parent().nextAll('td.col-settings').click();
       cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="delete"]').eq(0).click();
       cy.wait('@verifyMilestoneView')
     })
-    cy.get('@openMilestones').within(() => {
+    cy.get('@milestoneWindow').within(() => {
       cy.get('td.col-milestone a').should('not.contain', title);
     })
   }
