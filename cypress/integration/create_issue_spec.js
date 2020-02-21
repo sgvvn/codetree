@@ -3,20 +3,46 @@
 import { randomString, clickOnElement, clickOn, sidestep_login } from './util'
 
 describe('Add Issue Functionality Tests', () => {
-  context('At List View', () => {
+  var random;
+  var user;
+  before(function () {
+    cy.fixture('users.json').as('usersData');
+    cy.get('@usersData').then((users) => {
+      user = users.grp1Collaborator;
+    })
+  })
 
-    var user;
-    before(function () {
-      cy.fixture('users.json').as('usersData');
-      cy.get('@usersData').then((users) => {
-        user = users.grp1Collaborator;
+  beforeEach(function () {
+    random = randomString(4);
+    cy.server();
+    sidestep_login(user.publicId);
+    cy.get('.sidebar').should('be.visible');
+  })
+
+  it('verify fields at create issue window #CRISU_001', () => {
+      cy.contains('Add Issue').click();
+      cy.get('#title').should('be.visible');
+      cy.get('span.username').should('be.visible');
+      cy.get('span[data-section="stage-title"]').then(($ele) => {
+        expect($ele.text()).to.eq("Untriaged");
       })
+      cy.get('div.octicon-wrapper .octicon').first().should('be.visible');
+      cy.get('span[data-section="epic-title"]').last().should('be.visible');
+     // cy.contains('Create Issue').should('be.visible')
+
+      cy.contains('Create Issue').should('be.visible').click();
+      cy.get('div[data-errors-for="title"]').first().should('contain', "Please enter an issue title");
+      cy.get('button.issue-form-command').click();
     })
 
+  context('At List View', () => {
+   // var random;
+
     beforeEach(function () {
-      cy.server();
-      sidestep_login(user.publicId);
-      cy.get('.sidebar').should('be.visible');
+      // random = randomString(4);
+      // cy.server();
+      // sidestep_login(user.publicId);
+      // cy.get('.sidebar').should('be.visible');
       cy.location('pathname').then((loc) => {
         if (loc == '/projects/' + user.projectId + '/board') {
           clickOn('a#filter-format');
@@ -30,34 +56,43 @@ describe('Add Issue Functionality Tests', () => {
       cy.route('GET', '/projects/*/issues/*.json?filter={}').as('verifyCreateIssue');
     })
 
-    it('verify fields at create issue window #CRISU_001', () => {
+    afterEach(function () {
+      cy.get('div[data-id="-"] div.issue-title').contains(random).parent().parent().click({ force: true });
+      cy.route('GET', '/projects/*/issues/*/timeline.json').as('editIssue');
+      cy.wait('@editIssue');
+      cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
+      cy.xpath('//input[@name="stage"]').last().click();
+      cy.route('POST','/projects/*/issues/*').as('editStage');
+      cy.wait('@verifyCreateIssue');
+    })
+
+    it('verify user able to create issue successfully with default setting #CRISU_001 #CRISU_002 #CRISU_003', () => {
       cy.contains('Add Issue').click();
+      cy.wait(400);
+
       cy.get('#title').should('be.visible');
       cy.get('span.username').should('be.visible');
       cy.get('span[data-section="stage-title"]').then(($ele) => {
-        expect($ele.text()).to.eq("Untriaged");
+        expect($ele.text(), 'Default Stage').to.eq("Untriaged");
       })
       cy.get('div.octicon-wrapper .octicon').first().should('be.visible');
       cy.get('span[data-section="epic-title"]').last().should('be.visible');
       cy.contains('Create Issue').should('be.visible')
-      cy.get('button.issue-form-command').click();
-    })
 
-    it('verify user able to create issue successfully with default setting #CRISU_002', () => {
-      var random = randomString(4);
-      cy.contains('Add Issue').click();
-      cy.wait(400);
+      cy.contains('Create Issue').as('createIssueButton');
+      // cy.get('div[data-errors-for="title"]').first().should('contain', "Please enter an issue title");
+
       cy.get('#title').type("Test Issue " + random);
-      cy.contains('Create Issue').click();
+      cy.get('@createIssueButton').click();
       cy.wait('@createIssue');
       cy.get('button.issue-form-command').click();
       cy.wait('@verifyCreateIssue');
+      cy.get('div.flash-tab-container div').last().should('contain', 'Issue created:').and('contain',random)
       cy.get('div[data-id="-"] div.issue-title').first().should('contain', random);
     })
 
 
     it('verify user able to create issue successfully with all setting #CRISU_006 #CRISU_010 #CRISU_011', () => {
-      var random = randomString(4);
       cy.contains('Add Issue').click();
       cy.wait(400);
       cy.get('#title').type("Test Issue " + random);
@@ -66,7 +101,7 @@ describe('Add Issue Functionality Tests', () => {
       clickOnElement('div.octicon-wrapper .octicon', "first");
       clickOnElement('input[type="checkbox"]', "first");
       clickOn('//*[contains(text(),"No assignees")]');
-      clickOn('(//span[contains(text(),"'+user.name+'")])[2]');
+      clickOn('(//span[contains(text(),"' + user.name + '")])[2]');
 
       cy.contains('Create Issue').click();
       cy.wait('@createIssue');
@@ -77,16 +112,7 @@ describe('Add Issue Functionality Tests', () => {
       cy.get('span.assignees span.name').first().should("contain", user.name);
     })
 
-    it('verify title validation functionality at create issue window #CRISU_003', () => {
-      cy.contains('Add Issue').click();
-      cy.wait(400);
-      cy.contains('Create Issue').click();
-      cy.get('div[data-errors-for="title"]').first().should('contain', "Please enter an issue title");
-      cy.get('button.issue-form-command').click();
-    })
-
     it('verify user able to create issue successfully with priority setting #CRISU_005', () => {
-      var random = randomString(4);
       cy.contains('Add Issue').click();
       cy.wait(400);
       cy.get('#title').type("Test Issue " + random);
@@ -99,7 +125,6 @@ describe('Add Issue Functionality Tests', () => {
     })
 
     it('verify user able to create issue successfully with stage option In Progress #CRISU_007', () => {
-      var random = randomString(4);
       cy.contains('Add Issue').click();
       cy.wait(400);
       cy.get('#title').type("Test Issue " + random);
@@ -112,22 +137,16 @@ describe('Add Issue Functionality Tests', () => {
       cy.get('div[data-id="-"] div.issue-title').first().should('contain', random);
       cy.get('div[data-id="-"] div.issue-stage').first().should("contain", "In Progress");
     })
+
   })
 
   context('At Board View', () => {
-    var user;
-
-    before(function () {
-      cy.fixture('users.json').as('usersData');
-      cy.get('@usersData').then((users) => {
-        user = users.grp1Collaborator;
-      })
-    })
-
+    
     beforeEach(function () {
-      cy.server();
-      sidestep_login(user.publicId);
-      cy.get('.sidebar').should('be.visible');
+      // random = randomString(4);
+      // cy.server();
+      // sidestep_login(user.publicId);
+      // cy.get('.sidebar').should('be.visible');
       cy.location('pathname').then((loc) => {
         if (loc == '/projects/' + user.projectId + '/issues') {
           clickOn('a#filter-format');
@@ -141,8 +160,19 @@ describe('Add Issue Functionality Tests', () => {
       cy.route('GET', '/projects/*/cards/*?filter={}').as('verifyCreateIssue');
     })
 
+    afterEach(function () {
+      cy.get('div.flash-tab-container div').last().should('contain', 'Issue created:').and('contain',random)
+      cy.get('h3.board-card-title').contains(random).click({ force: true });
+      cy.route('GET', '/projects/*/issues/*/timeline.json').as('editIssue');
+      cy.wait('@editIssue');
+      cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
+      cy.xpath('//input[@name="stage"]').last().click();
+      cy.route('POST','/projects/*/issues/*').as('editStage');
+      cy.wait('@verifyCreateIssue');
+    })
+
     it('verify user able to create issue successfully with default setting #CRISU_002', () => {
-      var random = randomString(4);
+      
       cy.contains('Add Issue').click();
       cy.wait(400);
       cy.get('#title').type("Test Issue " + random);
@@ -155,7 +185,6 @@ describe('Add Issue Functionality Tests', () => {
 
 
     it('verify user able to create issue successfully with all setting #CRISU_006 #CRISU_010 #CRISU_011', () => {
-      var random = randomString(4);
       cy.contains('Add Issue').click();
       cy.wait(400);
       cy.get('#title').type("Test Issue " + random);
@@ -167,18 +196,17 @@ describe('Add Issue Functionality Tests', () => {
       clickOnElement('input[type="checkbox"]', "first");
 
       clickOn('//*[contains(text(),"No assignees")]');
-      clickOn('(//span[contains(text(),"'+user.name+'")])[2]');
+      clickOn('(//span[contains(text(),"' + user.name + '")])[2]');
 
       cy.contains('Create Issue').click();
       cy.wait('@createIssue');
       cy.get('button.issue-form-command').click();
       cy.wait('@verifyCreateIssue');
       cy.get('div[data-id="w8Uj"] h3.board-card-title').first().should('contain', random);
-      cy.get('div[data-id="w8Uj"] div[data-role="assignee"] span').first().should("have.attr", "data-original-title", "Assigned to "+user.name);
+      cy.get('div[data-id="w8Uj"] div[data-role="assignee"] span').first().should("have.attr", "data-original-title", "Assigned to " + user.name);
     })
 
     it('verify user able to create issue successfully with priority setting #CRISU_005', () => {
-      var random = randomString(4);
       cy.contains('Add Issue').click();
       cy.wait(400);
       cy.get('#title').type("Test Issue " + random);
@@ -191,7 +219,6 @@ describe('Add Issue Functionality Tests', () => {
     })
 
     it('verify user able to create issue successfully with stage option In Progress #CRISU_007', () => {
-      var random = randomString(4);
       cy.contains('Add Issue').click();
       cy.wait(400);
       cy.get('#title').type("Test Issue " + random);
