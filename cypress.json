@@ -1,6 +1,6 @@
 {
   "baseUrl": "https://staging.codetree.com",
-  "testFiles": "create_issue_spec.js",
+  "testFiles": "changing_updating_milestone_spec.js",
   "video": false,
   "videoUploadOnPasses": false,
   "projectId": "613nzj",
