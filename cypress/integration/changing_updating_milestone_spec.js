@@ -21,6 +21,12 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
         cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
         cy.get('table[data-container="milestones"]').first().as('openMilestones')
         cy.get('table[data-container="milestones"]').last().as('closeMilestones')
+        cy.route('POST', '/projects/*/issues').as('createIssue');
+        cy.route('GET', '/projects/*/cards/*?filter={}').as('verifyCreateIssue');
+        cy.route("GET", '/projects/*/cards/*?filter={"type":"epic"}').as('verifyEpic');
+        cy.route('GET','projects/*/views?type=epic&include_counts=true&scope=issues&view_type=boards').as('addEpics');
+        cy.route('GET','/projects/*/issues/*/edit').as('editIssue');
+        cy.route('POST','/projects/*/issues/*').as('moveIssueDone');
     })
 
     context('At Open Milestone Window', () => {
@@ -40,7 +46,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
             });
         })
 
-        it('verify created milestone move to top functionality', () => {
+        it('verify created milestone move to top functionality CHGMIL_002 CHGMIL_003', () => {
             cy.get('@openMilestones').within(() => {
                 cy.get('td.col-milestone a').contains(random).parent().prev('td.col-handle').click();
                 cy.xpath('//span[@aria-expanded="true"]//following::div[@class="dropdown-menu sort-dropdown"]/ul/li/a').should(($ele) => {
@@ -55,7 +61,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
             })
         })
 
-        it('verify created milestone move to bottom functionality', () => {
+        it('verify created milestone move to bottom functionality CHGMIL_002 CHGMIL_004', () => {
             cy.get('@openMilestones').within(() => {
                 cy.get('td.col-milestone a').contains(random).parent().prev('td.col-handle').click();
                 cy.xpath('//span[@aria-expanded="true"]//following::div[@class="dropdown-menu sort-dropdown"]/ul/li/a').should(($ele) => {
@@ -70,16 +76,87 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
             })
         })
 
-        it('verify created milestone close and reopen again functionality', () => {
+        it('verify new created milestone not assinged to any issue in both List and Board view CHGMIL_007', () => {
+            cy.get('@openMilestones').within(() => {
+                cy.get('td.col-milestone a').contains(random).parent().siblings('td.col-controls').click();
+            })
+            cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
+            cy.get('.board-card-details').should('have.length', '0');
+            clickOn('a#filter-format');
+            clickOn('input[value="list"]');
+            cy.location('pathname').should('include', 'projects/' + user.projectId + '/issues')
+            cy.get('tr[data-item="issue"]').should('have.length', '0');
+        })
+
+        it('verify created milestone add in create issue functionality', () => {
+            cy.contains('Add Issue').click();
+            cy.wait(400);
+            cy.get('#title').type("Test Issue " + random);
+            clickOnElement('a.issue-form-milestone-menu-toggle .octicon', "last");
+            cy.get('.issue-form-milestone-menu .dropdown-menu .menu-item-filter .text-field').last().type(random);
+            cy.get('.issue-form-milestone-menu .dropdown-menu ul li').contains(random).click();
+            cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', random);
+            cy.contains('Create Issue').click();
+            cy.wait('@createIssue');
+            clickOn('button.issue-form-command');
+            clickOn('//a/span[contains(text(),"Issues")]');
+            cy.get('div[data-id="backlog"] ul.issue-labels li').first().should('contain', random);
+        })
+
+        it('verify created milestone 100% completed after change stage by Done of created issue', () => {
+            cy.get('@openMilestones').within(() => {
+                cy.get('td.col-milestone a').contains(random).click();
+            })
+            cy.get('div[data-id="backlog"] .board-card-details h3').contains(random).click();
+            cy.wait('@editIssue');
+            cy.xpath('//span[contains(text(),"Untriaged")]').last().click({ force: true });
+            cy.get('input#stage_done').last().click();
+            cy.wait('@moveIssueDone');
+            clickOn('//span[contains(text(),"Milestones")]')
+            cy.get('@openMilestones').within(() => {
+                cy.get('td.col-milestone a').contains(random).parent().siblings('td.col-progress-summary').should('contain','100% complete');
+            })
+        })
+
+        it('verify created lable add in create epic functionality CRLB_011', () => {
+            clickOn('//span[contains(text(),"Epics")]');
+            cy.wait('@addEpics');
+            clickOn('button.add-issue-carat');
+            clickOn('a[data-component="new-epic-controls"]');
+            cy.wait(300);
+            setTextOn('input.new-title-field', "Test Epic " + random);
+            clickOnElement('a.issue-form-milestone-menu-toggle .octicon', "last");
+            cy.get('.issue-form-milestone-menu .dropdown-menu .menu-item-filter .text-field').last().type(random);
+            cy.get('.issue-form-milestone-menu .dropdown-menu ul li').contains(random).click();
+            cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', random);
+            clickOn('button[data-behavior="create-issue"]');
+            clickOn('button.issue-form-command');
+            cy.get('div[data-id="backlog"] ul.issue-labels li').first().should('contain', random);
+          })
+
+          it('verify created milestone 100% completed after change stage by Done of created epic', () => {
+            clickOn('//span[contains(text(),"Epics")]');
+            cy.get('div[data-id="backlog"] .board-card-details h3').contains(random).click();
+            cy.wait('@editIssue');
+            cy.xpath('//span[contains(text(),"Untriaged")]').last().click({ force: true });
+            cy.get('input#stage_done').last().click();
+            cy.wait('@moveIssueDone');
+            clickOn('//span[contains(text(),"Milestones")]')
+            cy.get('@openMilestones').within(() => {
+                cy.get('td.col-milestone a').contains(random).parent().siblings('td.col-progress-summary').should('contain','100% complete');
+            })
+        })
+
+        it('verify created milestone close and reopen again functionality CHGMIL_008 CHGMIL_010', () => {
             MilestonePage.closeMilestone(random);
             MilestonePage.reopenMilestone(random);
         })
 
-        it('verify created milestone edit title successfully', () => {
+        it('verify created milestone edit title successfully CHGMIL_008 CHGMIL_011', () => {
             MilestonePage.editMilestone(random, 'openMilestone');
         })
 
-        it('verify created milestone delete successfully', () => {
+        it('verify created milestone delete successfully CHGMIL_008 CHGMIL_009', () => {
             MilestonePage.deleteMilestone(random, 'openMilestone');
         })
     })
@@ -132,7 +209,19 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
             })
         })
 
-        it('verify created milestone reopen and close again functionality', () => {
+        it('verify new closed milestone not assinged to any issue in both List and Board view CHGMIL_007', () => {
+            cy.get('@closeMilestones').within(() => {
+                cy.get('td.col-milestone a').contains(random).parent().siblings('td.col-controls').click();
+            })
+            cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
+            cy.get('.board-card-details').should('have.length', '0');
+            clickOn('a#filter-format');
+            clickOn('input[value="list"]');
+            cy.location('pathname').should('include', 'projects/' + user.projectId + '/issues')
+            cy.get('tr[data-item="issue"]').should('have.length', '0');
+        })
+
+        it('verify closed milestone reopen and close again functionality', () => {
             MilestonePage.reopenMilestone(random);
             MilestonePage.closeMilestone(random);
         })
