@@ -108,10 +108,10 @@ describe('Codetree : Add Label Functionality Tests', () => {
   it('verify created label edit successfully CRLB_005 CRLB_006', () => {
     clickOn('//span[contains(text(),"Labels")]');
     cy.get('.col-name a').contains(random).parent().next('td').children().first().click();
+    cy.wait(300);
     cy.get('h4.modal-title').should(($lis) => {
       expect($lis, 'Title of Window').contain('Edit Label')
     })
-    cy.get('input.button').last().should('have.value', 'Save Label').as('saveLableButton');
     cy.get('input[class="text-field color-hex"]').as('colorInputText')
     cy.get('@colorInputText').click().clear();
     cy.get('@colorInputText').should('have.value', '');
@@ -120,6 +120,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.get('input#name').as('nameInputText').should('contain.value', random);
     cy.get('@nameInputText').click().clear()
     cy.get('@nameInputText').should('have.value', '');
+    cy.get('input.button').last().should('have.value', 'Save Label').as('saveLableButton');
     cy.get('@saveLableButton').click();
     cy.get('@nameInputText').next('div').should('contain', 'Please enter a name');
     cy.get('@nameInputText').type('Updated ' + random);
