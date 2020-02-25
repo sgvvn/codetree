@@ -50,12 +50,12 @@ describe('Add Issue Functionality Tests', () => {
 
     afterEach(function () {
       cy.get('div[data-id="-"] div.issue-title').contains(random).parent().parent().click({ force: true });
-      cy.route('GET', '/projects/*/issues/*/timeline.json').as('editIssue');
+      cy.route('GET', '/projects/*/issues/*/*').as('editIssue');
       cy.wait('@editIssue');
       cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
       cy.xpath('//input[@name="stage"]').last().click();
-      cy.route('POST','/projects/*/issues/*').as('editStage');
-      cy.wait('@verifyCreateIssue');
+      cy.get('button.issue-form-status').should('contain','Closed');
+      cy.route('GET','/projects/*/issues/*.json?filter={}');
     })
 
     it('verify user able to create issue successfully with default setting #CRISU_002', () => {
@@ -133,14 +133,13 @@ describe('Add Issue Functionality Tests', () => {
     })
 
     afterEach(function () {
-      cy.get('div.flash-tab-container div').last().should('contain', 'Issue created:').and('contain',random)
       cy.get('h3.board-card-title').contains(random).click({ force: true });
-      cy.route('GET', '/projects/*/issues/*/timeline.json').as('editIssue');
+      cy.route('GET', '/projects/*/issues/*/*').as('editIssue');
       cy.wait('@editIssue');
       cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
       cy.xpath('//input[@name="stage"]').last().click();
-      cy.route('POST','/projects/*/issues/*').as('editStage');
-      cy.wait('@verifyCreateIssue');
+      cy.get('button.issue-form-status').should('contain','Closed');
+      cy.route('GET','/projects/*/issues/*.json?filter={}');
     })
 
     it('verify user able to create issue successfully with default setting #CRISU_002', () => {
