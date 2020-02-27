@@ -143,8 +143,8 @@ describe('Codetree : Add Label Functionality Tests', () => {
   })
 
   it('verify deleted lable removed from created issue and change stage done CRLB_012', () => {
-    cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).siblings('ul.issue-labels').children().should('have.length', 0)
- //cy.get('div[data-id="backlog"] ul.issue-labels').children().should('have.length', 0)
+    //cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).siblings('ul.issue-labels').children().should('have.length', 0)
+    cy.get('div[data-id="backlog"] ul.issue-labels').children().should('have.length', 0)
     cy.get('div[data-id="backlog"] .board-card-details h3').contains(random).click();
     cy.wait('@editIssue');
     cy.xpath('//span[contains(text(),"Untriaged")]').last().click({ force: true });
