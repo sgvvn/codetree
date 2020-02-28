@@ -13,7 +13,12 @@ class MilestonePage {
     cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
-    cy.get('ul.dr-day-list li[class="dr-day"]').contains('28').last().click();
+    if(Cypress.moment().format('DD') == '28'){
+      cy.get('ul.dr-day-list li[class="dr-day dr-current"]').contains('28').click();
+    }
+    else{
+      cy.get('ul.dr-day-list li[class="dr-day"]').contains('28').last().click();
+    }
     clickOn('input.milestone-submit');
     cy.wait('@verifyCreateMilestone');
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
@@ -59,7 +64,8 @@ class MilestonePage {
     cy.get('table[data-container="milestones"]').first().as('openMilestones')
     cy.get('table[data-container="milestones"]').last().as('closeMilestones')
     cy.get('@openMilestones').within(() => {
-      cy.get('td.col-milestone a').contains(title).parent().siblings('td.col-settings').should('be.visible').click();
+      cy.get('td.col-milestone a').contains(title).parent().siblings('td.col-settings').should('be.visible');
+      cy.get('td.col-milestone a').contains(title).parent().nextAll('td.col-settings').click();
       cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="transition"]').eq(0).click();
       cy.wait('@verifyMilestoneView')
     })
@@ -69,6 +75,7 @@ class MilestonePage {
     cy.get('@closeMilestones').within(() => {
       cy.get('td.col-milestone a').should('contain', title);
     })
+   
   }
 
   reopenMilestone(title) {
