@@ -4,8 +4,21 @@ import { randomString, clickOnElement, clickOn, setTextOn, sidestep_login } from
 
 describe('Codetree : Add Milestones functionality Tests', () => {
   var random;
-
   var user;
+
+  function deleteMilestone(title) {
+    cy.get('table[data-container="milestones"]').first().as('milestoneWindow');
+    cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
+    cy.get('@milestoneWindow').within(() => {
+      cy.get('td.col-milestone a').contains(title).parent().nextAll('td.col-settings').click();
+      cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="delete"]').eq(0).click();
+      cy.wait('@verifyMilestoneView')
+    })
+    cy.get('@milestoneWindow').within(() => {
+      cy.get('td.col-milestone a').should('not.contain', title);
+    })
+  }
+
   before(function () {
     cy.fixture('users.json').as('usersData');
     cy.get('@usersData').then((users) => {
@@ -54,6 +67,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('@openMilestones').first().within(() => {
       cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
     })
+    deleteMilestone(random);
   })
 
   it('verify to add milestone successfully with all data field #CRMIL_005', () => {
@@ -64,7 +78,12 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
-    cy.get('ul.dr-day-list li[class="dr-day"]').contains('28').last().click();
+    if(Cypress.moment().format('DD') == '28'){
+      cy.get('ul.dr-day-list li[class="dr-day dr-current"]').contains('28').click();
+    }
+    else{
+      cy.get('ul.dr-day-list li[class="dr-day"]').contains('28').last().click();
+    }
     clickOn('input.milestone-submit');
     cy.wait('@verifyCreateMilestone');
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
@@ -73,6 +92,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
       const date = Cypress.moment().format('MMMM') + ' 28, ' + Cypress.moment().format('YYYY');
       cy.get('tr[data-item="milestone"] td.col-due-on').last().should("contain", date)
     })
+    deleteMilestone(random);
    })
 
   it('verify Due-Date validation functionality at add milestone window #CRMIL_006', () => {
@@ -100,6 +120,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     clickOn('a[data-behavior="clear-due-date"]')
     cy.get('div.dr-input div div').first().should('have.attr', 'placeholder', 'Enter an optional start date')
     cy.get('div.dr-input div div').last().should('have.attr', 'placeholder', 'Enter an optional due date')
+    cy.get('.modal-header button.close').first().click();
   })
 
 })
