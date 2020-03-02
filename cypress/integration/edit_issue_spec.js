@@ -22,7 +22,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.route('GET', '/projects/*/cards/*?filter={}').as('verifyCreateIssue');
     })
 
-    it('verify fields at edit issue window EDISSU_001 EDISSU_015', () => {
+    it('verify fields at edit issue window EDISSU_001', () => {
         cy.contains('Add Issue').click();
         cy.wait(400);
         cy.get('#title').type("Test Issue " + random);
@@ -46,6 +46,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('textarea[name="comment[body]"]').type('Add comment test');
         cy.get('button.button').last().should('contain', 'Comment').and('be.enabled').click();
         cy.route('POST','/projects/*/issues/*/comments')
+        cy.wait('@verifyCreateIssue');
         cy.get('div.timeline-node-body').last().should('contain', 'Add comment test')
     })
 
