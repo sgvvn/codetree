@@ -46,7 +46,6 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('textarea[name="comment[body]"]').type('Add comment test');
         cy.get('button.button').last().should('contain', 'Comment').and('be.enabled').click();
         cy.route('POST','/projects/*/issues/*/comments')
-        cy.wait('@verifyCreateIssue');
         cy.get('div.timeline-node-body').last().should('contain', 'Add comment test')
     })
 
@@ -193,6 +192,5 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('button.issue-form-status').should('contain','Open').click();
         clickOnElement('button.issue-form-command','last');
         cy.wait('@verifyCreateIssue');
-        cy.get('div[data-id="qh6H"] h3.board-card-title').should('not.contain', random);
     })
 })
