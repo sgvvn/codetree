@@ -22,7 +22,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.route('GET', '/projects/*/cards/*?filter={}').as('verifyCreateIssue');
     })
 
-    it('verify fields at edit issue window EDISSU_001', () => {
+    it('verify fields at edit issue window EDISSU_001 EDISSU_015', () => {
         cy.contains('Add Issue').click();
         cy.wait(400);
         cy.get('#title').type("Test Issue " + random);
@@ -38,6 +38,16 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
             expect(btn, 'Pencil icon for edit ').to.be.visible;
         })
         cy.get('button.button').last().should('contain', 'Comment').and('be.disabled');
+    })
+
+    it('verify editing issue functionality for updating issue by add comment EDISSU_015', () => {
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
+        cy.get('span.issue-form-title').should('contain', random);
+        cy.get('textarea[name="comment[body]"]').type('Add comment test');
+        cy.get('button.button').last().should('contain', 'Comment').and('be.enabled').click();
+        cy.route('POST','/projects/*/issues/*/comments')
+        cy.wait('@verifyCreateIssue');
+        cy.get('div.timeline-node-body').last().should('contain', 'Add comment test')
     })
 
     it('verify popup message by put blank issue title EDISSU_004', () => {
@@ -99,7 +109,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         })
     })
 
-    it('verify editing issue functionality for updating description to update comment button EDISSU_005 EDISSU_015', () => {
+    it('verify editing issue functionality for updating description to update comment button EDISSU_005 EDISSU_006', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         cy.get('div[data-section="body"]').last().within(() => {
@@ -113,6 +123,76 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('div[data-section="body"]').last().within(() => {
             cy.get('div.timeline-node-body p').should('contain', 'needs 456')
         })
+    })
 
+    it('verify editing issue functionality for updating milestone by "DND 1" EDISSU_009', () => {
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
+        cy.get('span.issue-form-title').should('contain', random);
+        clickOnElement('a.issue-form-milestone-menu-toggle .octicon', "last");
+        cy.get('.issue-form-milestone-menu .dropdown-menu .menu-item-filter .text-field').last().type('DND 1');
+        cy.get('.issue-form-milestone-menu .dropdown-menu ul li.nav-focus').contains('DND 1').click();
+        cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', 'DND 1');
+        cy.wait('@verifyCreateIssue');
+        clickOnElement('button.issue-form-command','last');
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
+    })
+
+    it('verify editing issue functionality for updating Label by "enhancement" EDISSU_014', () => {
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
+        cy.get('span.issue-form-title').should('contain', random);
+        clickOnElement('div.octicon-wrapper .octicon', "last");
+        cy.get('input[value="enhancement"]').last().click();
+        cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain','enhancement');
+        clickOnElement('button.issue-form-command','last');
+        cy.wait('@verifyCreateIssue');
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'enhancement');
+    })
+
+    it('verify editing issue functionality for updating assignees EDISSU_012', () => {
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
+        cy.get('span.issue-form-title').should('contain', random);
+        clickOnElement('a.assignees-gear-link','last');
+        cy.get('span.username').last().should('contain',user.name).click()
+        clickOnElement('button.issue-form-command','last');
+        cy.wait('@verifyCreateIssue');
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
+    })
+
+    it('verify editing issue functionality for updating epic EDISSU_008', () => {
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
+        cy.get('span.issue-form-title').should('contain', random);
+        clickOnElement('a.epic-gear-link','last');
+        cy.get('li.checkable-item.nav-focus').last().next('li').should('contain','EPIC Test Data DND').click()
+        clickOnElement('button.issue-form-command','last');
+        cy.wait('@verifyCreateIssue');
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('div.issue-epic span').should('contain','EPIC Test Data DND');
+    })
+
+    it('verify editing issue functionality for updating priority EDISSU_010', () => {
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
+        cy.get('span.issue-form-title').should('contain', random);
+        clickOnElement('button.issue-form-priority-button', "last");
+        cy.wait('@verifyCreateIssue');
+        clickOnElement('button.issue-form-command','last');
+        cy.get('div[data-id="backlog"] h3.board-card-title').last().should('contain', random);
+    })
+
+    it('verify editing issue functionality for updating stage by "in-progress" EDISSU_013', () => {
+        cy.get('h3.board-card-title').contains(random).click();
+        cy.get('span.issue-form-title').should('contain', random);
+        cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
+        cy.xpath('//input[@id="stage_in_progress"]').last().click();
+        clickOnElement('button.issue-form-command','last');
+        cy.wait('@verifyCreateIssue');
+        cy.get('div[data-id="qh6H"] h3.board-card-title').should('contain', random);
+    })
+
+    it('verify editing issue functionality for updating issue by "close" EDISSU_011', () => {
+        cy.get('h3.board-card-title').contains(random).click();
+        cy.get('span.issue-form-title').should('contain', random);
+        cy.get('button.issue-form-status').should('contain','Open').click();
+        clickOnElement('button.issue-form-command','last');
+        cy.wait('@verifyCreateIssue');
+        cy.get('div[data-id="qh6H"] h3.board-card-title').should('not.contain', random);
     })
 })
