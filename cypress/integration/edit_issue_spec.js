@@ -4,7 +4,7 @@ import { randomString, clickOnElement, clickOn, setTextOn, sidestep_login, clear
 describe('Codetree : Edit Issue Functionality Tests', () => {
     var random = randomString(4);
     var user;
-    
+
     before(function () {
         cy.fixture('users.json').as('usersData');
         cy.get('@usersData').then((users) => {
@@ -19,7 +19,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
         cy.route('GET', '/projects/*/issues/*/timeline.json').as('updateTitle');
         cy.route('POST', '/projects/*/issues').as('createIssue');
-        cy.route('GET', '/projects/*/cards/*?filter={}').as('verifyCreateIssue');
+        cy.route('GET', '/projects/*/cards/*').as('verifyCreateIssue');
     })
 
     it('verify fields at edit issue window EDISSU_001', () => {
@@ -45,7 +45,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('span.issue-form-title').should('contain', random);
         cy.get('textarea[name="comment[body]"]').type('Add comment test');
         cy.get('button.button').last().should('contain', 'Comment').and('be.enabled').click();
-        cy.route('POST','/projects/*/issues/*/comments')
+        cy.route('POST', '/projects/*/issues/*/comments')
         cy.wait('@verifyCreateIssue');
         cy.get('div.timeline-node-body').last().should('contain', 'Add comment test')
     })
@@ -102,7 +102,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
             cy.get('div.timeline-node-body p').should('contain', 'needs 123')
             cy.get('.timeline-node-header .comment-controls').click();
         })
-        cy.get('button[data-behavior="toggle-composer"]').as('cancelButton').should('be.enabled')
+        cy.get('button[data-behavior="toggle-composer"]').first().as('cancelButton').should('be.enabled')
         cy.get('@cancelButton').click();
         cy.get('div[data-section="body"]').last().within(() => {
             cy.get('div.timeline-node-body p').should('contain', 'needs 123')
