@@ -48,7 +48,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('div.issue-form-comments div.timeline-node-body').should('be.visible').and('contain', 'Add comment test')
     })
 
-    it.skip('verify popup message by put blank issue tit.skiple EDISSU_004', () => {
+    it('verify popup message by put blank issue tit.skiple EDISSU_004', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         cy.get('button.issue-form-command .octicon-pencil').click();
@@ -66,7 +66,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('div.flash-tab-container div').first().should('contain', 'We had a problem saving data for');
     })
 
-    it.skip('verify editing issue functionality for updating title to cancel button EDISSU_003', () => {
+    it('verify editing issue functionality for updating title to cancel button EDISSU_003', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
 
@@ -80,7 +80,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         })
     })
 
-    it.skip('verify editing issue functionality for updating title to save button EDISSU_002', () => {
+    it('verify editing issue functionality for updating title to save button EDISSU_002', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         cy.get('button.issue-form-command .octicon-pencil').click();
@@ -93,7 +93,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('.issue-form-title').should('contain', "Update Issue " + random)
     })
 
-    it.skip('verify editing issue functionality for updating description to cancel button EDISSU_005 EDISSU_007', () => {
+    it('verify editing issue functionality for updating description to cancel button EDISSU_005 EDISSU_007', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         cy.get('div[data-section="body"]').last().within(() => {
@@ -107,7 +107,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         })
     })
 
-    it.skip('verify editing issue functionality for updating description to update comment button EDISSU_005 EDISSU_006', () => {
+    it('verify editing issue functionality for updating description to update comment button EDISSU_005 EDISSU_006', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         cy.get('div[data-section="body"]').last().within(() => {
@@ -123,7 +123,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         })
     })
 
-    it.skip('verify editing issue functionality for updating milestone by "DND 1" EDISSU_009', () => {
+    it('verify editing issue functionality for updating milestone by "DND 1" EDISSU_009', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('a.issue-form-milestone-menu-toggle .octicon', "last");
@@ -135,7 +135,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
     })
 
-    it.skip('verify editing issue functionality for updating Label by "enhancement" EDISSU_014', () => {
+    it('verify editing issue functionality for updating Label by "enhancement" EDISSU_014', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('div.octicon-wrapper .octicon', "last");
@@ -146,7 +146,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'enhancement');
     })
 
-    it.skip('verify editing issue functionality for updating assignees EDISSU_012', () => {
+    it('verify editing issue functionality for updating assignees EDISSU_012', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('a.assignees-gear-link','last');
@@ -156,7 +156,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
     })
 
-    it.skip('verify editing issue functionality for updating epic EDISSU_008', () => {
+    it('verify editing issue functionality for updating epic EDISSU_008', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('a.epic-gear-link','last');
@@ -166,7 +166,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('div.issue-epic span').should('contain','EPIC Test Data DND');
     })
 
-    it.skip('verify editing issue functionality for updating priority EDISSU_010', () => {
+    it('verify editing issue functionality for updating priority EDISSU_010', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('button.issue-form-priority-button', "last");
@@ -175,7 +175,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').last().should('contain', random);
     })
 
-    it.skip('verify editing issue functionality for updating stage by "in-progress" EDISSU_013', () => {
+    it('verify editing issue functionality for updating stage by "in-progress" EDISSU_013', () => {
         cy.get('h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
@@ -185,7 +185,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('div[data-id="qh6H"] h3.board-card-title').should('contain', random);
     })
 
-    it.skip('verify editing issue functionality for updating issue by "close" EDISSU_011', () => {
+    it('verify editing issue functionality for updating issue by "close" EDISSU_011', () => {
         cy.get('h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         cy.get('button.issue-form-status').should('contain','Open').click();
