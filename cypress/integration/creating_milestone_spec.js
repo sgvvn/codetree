@@ -1,24 +1,11 @@
 /// <reference types="Cypress" />
 
 import { randomString, clickOnElement, clickOn, setTextOn, sidestep_login } from './util'
+const MilestonePage = new (require('../pages/MilestonePage'))();
 
 describe('Codetree : Add Milestones functionality Tests', () => {
   var random;
   var user;
-
-  function deleteMilestone(title) {
-    cy.get('table[data-container="milestones"]').first().as('milestoneWindow');
-    cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
-    cy.get('@milestoneWindow').within(() => {
-      cy.get('td.col-milestone a').contains(title).parent().siblings('td.col-settings').should('be.visible');
-      cy.get('td.col-milestone a').contains(title).parent().nextAll('td.col-settings').click();
-      cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="delete"]').eq(0).click();
-      cy.wait('@verifyMilestoneView')
-    })
-    cy.get('@milestoneWindow').within(() => {
-      cy.get('td.col-milestone a').should('not.contain', title);
-    })
-  }
 
   before(function () {
     cy.fixture('users.json').as('usersData');
@@ -68,7 +55,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('@openMilestones').first().within(() => {
       cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
     })
-    deleteMilestone(random);
+    MilestonePage.deleteMilestone(random,'openMileStone');
   })
 
   it('verify to add milestone successfully with all data field #CRMIL_005', () => {
@@ -93,7 +80,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
       const date = Cypress.moment().format('MMMM') + ' 28, ' + Cypress.moment().format('YYYY');
       cy.get('tr[data-item="milestone"] td.col-due-on').last().should("contain", date)
     })
-    deleteMilestone(random);
+    MilestonePage.deleteMilestone(random,'openMileStone');
    })
 
   it('verify Due-Date validation functionality at add milestone window #CRMIL_006', () => {
