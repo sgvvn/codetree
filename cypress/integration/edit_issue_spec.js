@@ -45,9 +45,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('span.issue-form-title').should('contain', random);
         cy.get('textarea[name="comment[body]"]').type('Add comment test');
         cy.get('button.button').last().should('contain', 'Comment').and('be.enabled').click();
-        cy.route('POST', '/projects/*/issues/*/comments')
-        cy.wait('@verifyCreateIssue');
-        cy.get('div.timeline-node-body').last().should('contain', 'Add comment test')
+        cy.get('div.issue-form-comments div.timeline-node-body').should('be.visible').and('contain', 'Add comment test')
     })
 
     it('verify popup message by put blank issue title EDISSU_004', () => {
@@ -162,7 +160,8 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('a.epic-gear-link', 'last');
-        cy.get('li.checkable-item.nav-focus').last().next('li').should('contain', 'EPIC Test Data DND').click()
+        cy.get('div[class="dropdown-menu epic-menu"] input[class="text-field small"]').last().type('EPIC Test Data DND')
+        cy.get('li.checkable-item.nav-focus').last().should('contain', 'EPIC Test Data DND').click()
         clickOnElement('button.issue-form-command', 'last');
         cy.wait('@verifyCreateIssue');
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('div.issue-epic span').should('contain', 'EPIC Test Data DND');
