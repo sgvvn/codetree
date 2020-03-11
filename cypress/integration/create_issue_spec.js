@@ -169,7 +169,7 @@ describe('Add Issue Functionality Tests', () => {
       cy.get('button.issue-form-command').click();
       cy.wait('@verifyCreateIssue');
       cy.get('div[data-id="w8Uj"] h3.board-card-title').first().should('contain', random);
-      cy.get('div[data-id="w8Uj"] div[data-role="assignee"] span').first().should("have.attr", "data-original-title", "Assigned to " + user.name);
+      cy.get('div[data-id="w8Uj"] div[data-role="assignee"] span').should("have.attr", "data-original-title", "Assigned to " + user.name);
     })
 
     it('verify user able to create issue successfully with priority setting #CRISU_005', () => {

@@ -45,10 +45,12 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('span.issue-form-title').should('contain', random);
         cy.get('textarea[name="comment[body]"]').type('Add comment test');
         cy.get('button.button').last().should('contain', 'Comment').and('be.enabled').click();
-        cy.get('div.issue-form-comments div.timeline-node-body').should('be.visible').and('contain', 'Add comment test')
+        cy.route('POST', '/projects/*/issues/*/comments')
+        cy.wait('@verifyCreateIssue');
+        cy.get('div.timeline-node-body').last().should('contain', 'Add comment test')
     })
 
-    it('verify popup message by put blank issue tit.skiple EDISSU_004', () => {
+    it('verify popup message by put blank issue title EDISSU_004', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         cy.get('button.issue-form-command .octicon-pencil').click();
@@ -131,7 +133,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('.issue-form-milestone-menu .dropdown-menu ul li.nav-focus').contains('DND 1').click();
         cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', 'DND 1');
         cy.wait('@verifyCreateIssue');
-        clickOnElement('button.issue-form-command','last');
+        clickOnElement('button.issue-form-command', 'last');
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
     })
 
@@ -140,8 +142,8 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('div.octicon-wrapper .octicon', "last");
         cy.get('input[value="enhancement"]').last().click();
-        cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain','enhancement');
-        clickOnElement('button.issue-form-command','last');
+        cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain', 'enhancement');
+        clickOnElement('button.issue-form-command', 'last');
         cy.wait('@verifyCreateIssue');
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'enhancement');
     })
@@ -149,9 +151,9 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
     it('verify editing issue functionality for updating assignees EDISSU_012', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
-        clickOnElement('a.assignees-gear-link','last');
-        cy.get('span.username').last().should('contain',user.name).click()
-        clickOnElement('button.issue-form-command','last');
+        clickOnElement('a.assignees-gear-link', 'last');
+        cy.get('span.username').last().should('contain', user.name).click()
+        clickOnElement('button.issue-form-command', 'last');
         cy.wait('@verifyCreateIssue');
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
     })
@@ -159,11 +161,11 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
     it('verify editing issue functionality for updating epic EDISSU_008', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
-        clickOnElement('a.epic-gear-link','last');
-        cy.get('li.checkable-item.nav-focus').last().next('li').should('contain','EPIC Test Data DND').click()
-        clickOnElement('button.issue-form-command','last');
+        clickOnElement('a.epic-gear-link', 'last');
+        cy.get('li.checkable-item.nav-focus').last().next('li').should('contain', 'EPIC Test Data DND').click()
+        clickOnElement('button.issue-form-command', 'last');
         cy.wait('@verifyCreateIssue');
-        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('div.issue-epic span').should('contain','EPIC Test Data DND');
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('div.issue-epic span').should('contain', 'EPIC Test Data DND');
     })
 
     it('verify editing issue functionality for updating priority EDISSU_010', () => {
@@ -171,7 +173,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('button.issue-form-priority-button', "last");
         cy.wait('@verifyCreateIssue');
-        clickOnElement('button.issue-form-command','last');
+        clickOnElement('button.issue-form-command', 'last');
         cy.get('div[data-id="backlog"] h3.board-card-title').last().should('contain', random);
     })
 
@@ -180,7 +182,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('span.issue-form-title').should('contain', random);
         cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
         cy.xpath('//input[@id="stage_in_progress"]').last().click();
-        clickOnElement('button.issue-form-command','last');
+        clickOnElement('button.issue-form-command', 'last');
         cy.wait('@verifyCreateIssue');
         cy.get('div[data-id="qh6H"] h3.board-card-title').should('contain', random);
     })
@@ -188,8 +190,8 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
     it('verify editing issue functionality for updating issue by "close" EDISSU_011', () => {
         cy.get('h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
-        cy.get('button.issue-form-status').should('contain','Open').click();
-        clickOnElement('button.issue-form-command','last');
+        cy.get('button.issue-form-status').should('contain', 'Open').click();
+        clickOnElement('button.issue-form-command', 'last');
         cy.wait('@verifyCreateIssue');
     })
 })

@@ -77,7 +77,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
             cy.wait('@createIssue');
             clickOn('button.issue-form-command');
             clickOn('//a/span[contains(text(),"Issues")]');
-            cy.get('div[data-id="backlog"] ul.issue-labels li').first().should('contain', random);
+            cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', random);
         })
 
         it('verify created milestone close and reopen again functionality CHGMIL_005 CHGMIL_006', () => {
