@@ -58,7 +58,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('@sidebar').eq(3).find('div label span').should('contain', "Move to top");
     cy.get('@sidebar').eq(3).find('div').last().find('label span').should('contain', "Move to bottom");
     cy.get('@sidebar').eq(0).find('h3').should('contain', "Repository");
-    cy.get('button.issue-form-command').click();
+    cy.get('button.issue-form-command').last().click();
   })
 
   it('verify create epic functionality CREPIC_003', () => {
@@ -79,7 +79,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.wait(1000)
     cy.get('#edit_modal_epic_autocomplete_container ul li').first().click();
     cy.get('table[class="compact-table epic-issues"] tbody tr').first().find('td span').should('contain', random);
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
+    clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.xpath('//a/span[contains(text(),"Issues")]').click();
     cy.wait('@createissuewindow');
@@ -90,7 +90,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('button.issue-form-status').should('contain', 'Open').click();
     cy.route('GET','/projects/*/issues/*.json?filter={}');
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
+    clickOnElement('button.issue-form-command', 'last');
   })
 
   it('verify create epic without title window validation CREPIC_004', () => {
@@ -104,7 +104,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
   it('verify add epic priority move from top to bottom CREPIC_005', () => {
     cy.get('div[data-id="backlog"] div h3.board-card-title').first().contains(random).click();
     cy.get('ul.issue-form-priority-list li button[data-behavior="move-bottom"]').should('contain', "Move to bottom").click();
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click()
+    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
     cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] div h3.board-card-title').last().should('contain', random);
   })
@@ -124,7 +124,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('.issue-form-milestone-menu .dropdown-menu .menu-item-filter .text-field').last().type('DND 1');
     cy.get('.issue-form-milestone-menu .dropdown-menu ul li.nav-focus').contains('DND 1').click();
     cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', 'DND 1');
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
+    clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
   })
@@ -135,7 +135,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOnElement('div.octicon-wrapper .octicon', "last");
     cy.get('input[value="enhancement"]').last().click();
     cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain', 'enhancement');
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
+    clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'enhancement');
   })
@@ -145,7 +145,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('a.assignees-gear-link').last().click();
     cy.get('span.username').last().should('contain', user.name).click()
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
+    clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
   })
@@ -155,7 +155,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.wait('@verifyepicwindow');
     cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
     cy.xpath('//input[@id="stage_backlog"]').last().click();
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click()
+    cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
     cy.get('div[data-id="w8Uj"] div h3.board-card-title').should('contain',random);
   })
@@ -165,7 +165,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.wait('@verifyepicwindow');
     cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
     cy.xpath('//input[@id="stage_in_progress"]').last().click();
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click()
+    cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
     cy.get('div[data-id="qh6H"] div h3.board-card-title').should('contain',random);
   })
