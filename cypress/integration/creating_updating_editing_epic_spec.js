@@ -155,7 +155,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('#title').type("Test Issue " + random);
     cy.contains('Create Issue').click();
     cy.get('button.issue-form-command').click();
-    cy.get('div[class="flash-tab-container"] div.flash-tab.in a').should('contain', random);
+    cy.get('div.flash-tab-container div').last().should('contain', 'Issue created:').and('contain',random)
     cy.get('h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('div.issue-form-references div #epic_issue_textcomplete').click();
