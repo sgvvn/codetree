@@ -72,6 +72,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('#title').type("Test Issue " + random);
     cy.contains('Create Issue').click();
     cy.get('button.issue-form-command').click();
+    cy.wait('@verifyEpic')
     cy.get('h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('div.issue-form-references div #epic_issue_textcomplete').click();
