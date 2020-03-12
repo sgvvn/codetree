@@ -87,7 +87,6 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] div h3.board-card-title').first().should('contain', random);
-
   })
 
   it('verify add epic to select milestone functionality #CREPIC_009', () => {
@@ -123,32 +122,24 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
   })
 
-  it('verify added epic to change stages from default to backlog CREPIC_007 ', () => {
-    cy.get('div[data-id="backlog"] div h3.board-card-title').contains(random).click();
+  it('verify added epic move to backlog stage CREPIC_007 ', () => {
+    cy.get('h3.board-card-title').contains(random).click();
     cy.wait('@verifyepicwindow');
     cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
     cy.xpath('//div[@class="issue-form-stage-menu open"]/div/ul/li[2]/label/input').click();
     cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
-    cy.get('div[data-id="w8Uj"] div h3.board-card-title').contains(random).click();
-    cy.wait('@verifyepicwindow');
-    cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
-    cy.xpath('//div[@class="issue-form-stage-menu open"]/div/ul/li[2]/label/input').last().click();
-    cy.get('button.issue-form-command').last().click();
+    cy.get('div[data-id="w8Uj"] div h3.board-card-title').should('contain',random);
   })
 
-  it('verify added epic to change stages from default to inprogress CREPIC_008 ', () => {
-    cy.get('div[data-id="backlog"] div h3.board-card-title').contains(random).click();
+  it('verify added epic move to in-progress state CREPIC_008 ', () => {
+    cy.get('h3.board-card-title').contains(random).click();
     cy.wait('@verifyepicwindow');
     cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
     cy.xpath('//div[@class="issue-form-stage-menu open"]/div/ul/li[3]/label/input').click();
     cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
     cy.get('div[data-id="qh6H"] div h3.board-card-title').should('contain',random);
-    // cy.wait('@verifyepicwindow');
-    // cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
-    // cy.xpath('//div[@class="issue-form-stage-menu open"]/div/ul/li[2]/label/input').last().click();
-    // cy.get('button.issue-form-command').last().click();
   })
 
   it('verify added issue in epic add issue functionality #CREPIC_012', () => {
