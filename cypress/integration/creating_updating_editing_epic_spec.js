@@ -18,7 +18,11 @@ describe('Codetree : Add Epics functionality Tests', () => {
   after(function () {
     clickOn('//span[contains(text(),"Epics")]');
     cy.wait('@addEpics');
-    cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
+    cy.location().should((loc) => {
+      expect(loc.search).to.eq('?type=epic')
+      expect(loc.toString()).to.eq('https://staging.codetree.com/projects/'+user.projectId+'/board?type=epic')
+    })
+    cy.get('h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('button.issue-form-status').should('contain', 'Open').click();
     clickOnElement('button.issue-form-command', 'last');
@@ -138,24 +142,26 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.xpath('//div[@class="issue-form-stage-menu open"]/div/ul/li[3]/label/input').click();
     cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
-    cy.get('div[data-id="qh6H"] div h3.board-card-title').contains(random).click();
-    cy.wait('@verifyepicwindow');
-    cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
-    cy.xpath('//div[@class="issue-form-stage-menu open"]/div/ul/li[2]/label/input').last().click();
-    cy.get('button.issue-form-command').last().click();
+    cy.get('div[data-id="qh6H"] div h3.board-card-title').should('contain',random);
+    // cy.wait('@verifyepicwindow');
+    // cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
+    // cy.xpath('//div[@class="issue-form-stage-menu open"]/div/ul/li[2]/label/input').last().click();
+    // cy.get('button.issue-form-command').last().click();
   })
 
-  it('verify add epic to select assigned user functionality #CREPIC_012', () => {
+  it('verify added issue in epic add issue functionality #CREPIC_012', () => {
     cy.contains('Add Issue').click();
     cy.wait(400);
     cy.get('#title').type("Test Issue " + random);
     cy.contains('Create Issue').click();
     cy.get('button.issue-form-command').click();
     cy.get('div[class="flash-tab-container"] div.flash-tab.in a').should('contain', random);
-    cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
+    cy.get('h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('div.issue-form-references div #epic_issue_textcomplete').click();
     cy.get('div.issue-form-references div #epic_issue_textcomplete').type(random);
+    cy.route('GET','/projects/*/issues/autocomplete_json.json?type=all&status=&per_page=20&page=1&keyword='+random).as('waitForAutocomplete')
+    cy.wait('@waitForAutocomplete')
     cy.get('#edit_modal_epic_autocomplete_container ul li').first().click();
     cy.get('table[class="compact-table epic-issues"] tbody tr').first().find('td span').should('contain', random);
     clickOnElement('button.issue-form-command', 'last');
@@ -163,7 +169,10 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.xpath('//a/span[contains(text(),"Issues")]').click();
     cy.route('GET','/projects/*/board/*').as('verifyIssuePage');
     cy.wait('@verifyIssuePage');
-    cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
+    cy.wait(400)
+    cy.location().should((loc) => {
+      expect(loc.pathname).to.eq('/projects/' + user.projectId + '/board')
+    })
     cy.get('h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('button.issue-form-status').should('contain', 'Open').click();
