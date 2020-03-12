@@ -22,6 +22,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
       expect(loc.search).to.eq('?type=epic')
       expect(loc.toString()).to.eq('https://staging.codetree.com/projects/'+user.projectId+'/board?type=epic')
     })
+    cy.wait(300);
     cy.get('h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('button.issue-form-status').should('contain', 'Open').click();
