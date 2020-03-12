@@ -39,8 +39,9 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOn('//span[contains(text(),"Epics")]');
     cy.wait('@addEpics');
     cy.get('div.issue-form-sidebar div.issue-form-sidebar-item').as('sidebar');
-    cy.route('GET', '/projects/*/cards/*?filter={"type":"epic"}').as('verifyEpic')
+   // cy.route('GET', '/projects/*/cards/*?filter={"type":"epic"}').as('verifyEpic')
     cy.route('GET', '/projects/*/issues/*/edit').as('verifyepicwindow')
+    cy.route('GET', '/projects/*/cards/*').as('verifyEpic');
   })
 
   it('verify all fields at add epics window CREPIC_001 CREPIC_002', () => {
@@ -63,6 +64,33 @@ describe('Codetree : Add Epics functionality Tests', () => {
 
   it('verify create epic functionality CREPIC_003', () => {
     EpicPage.createEpic(random);
+  })
+
+  it('verify added issue in epic add issue functionality #CREPIC_012', () => {
+    cy.contains('Add Issue').click();
+    cy.wait(400);
+    cy.get('#title').type("Test Issue " + random);
+    cy.contains('Create Issue').click();
+    cy.get('button.issue-form-command').click();
+    cy.get('h3.board-card-title').contains(random).click();
+    cy.get('span.issue-form-title').should('contain', random);
+    cy.get('div.issue-form-references div #epic_issue_textcomplete').click();
+    cy.get('div.issue-form-references div #epic_issue_textcomplete').type(random);
+    cy.wait(1000)
+    cy.get('#edit_modal_epic_autocomplete_container ul li').first().click();
+    cy.get('table[class="compact-table epic-issues"] tbody tr').first().find('td span').should('contain', random);
+    clickOnElement('button.issue-form-command', 'last');
+    cy.wait('@verifyEpic')
+    cy.xpath('//a/span[contains(text(),"Issues")]').click();
+    cy.wait('@createissuewindow');
+    cy.location().should((loc) => {
+      expect(loc.pathname).to.eq('/projects/' + user.projectId + '/board')
+    })
+    cy.get('h3.board-card-title').contains(random).click();
+    cy.get('span.issue-form-title').should('contain', random);
+    cy.get('button.issue-form-status').should('contain', 'Open').click();
+    cy.route('GET','/projects/*/issues/*.json?filter={}');
+    clickOnElement('button.issue-form-command', 'last');
   })
 
   it('verify create epic without title window validation CREPIC_004', () => {
@@ -142,32 +170,6 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('div[data-id="qh6H"] div h3.board-card-title').should('contain',random);
   })
 
-  it('verify added issue in epic add issue functionality #CREPIC_012', () => {
-    cy.contains('Add Issue').click();
-    cy.wait(400);
-    cy.get('#title').type("Test Issue " + random);
-    cy.contains('Create Issue').click();
-    cy.get('button.issue-form-command').click();
-    cy.get('h3.board-card-title').contains(random).click();
-    cy.get('span.issue-form-title').should('contain', random);
-    //cy.get('div.issue-form-references div #epic_issue_textcomplete').click();
-    cy.get('div.issue-form-references div #epic_issue_textcomplete').type(random);
-    cy.wait(1000)
-    cy.get('#edit_modal_epic_autocomplete_container ul').should('be.visible');
-    cy.get('#edit_modal_epic_autocomplete_container ul li').first().click();
-    cy.get('table[class="compact-table epic-issues"] tbody tr').first().find('td span').should('contain', random);
-    clickOnElement('button.issue-form-command', 'last');
-    cy.wait('@verifyEpic')
-    cy.xpath('//a/span[contains(text(),"Issues")]').click();
-    cy.wait('@createissuewindow');
-    cy.location().should((loc) => {
-      expect(loc.pathname).to.eq('/projects/' + user.projectId + '/board')
-    })
-    cy.get('h3.board-card-title').contains(random).click();
-    cy.get('span.issue-form-title').should('contain', random);
-    cy.get('button.issue-form-status').should('contain', 'Open').click();
-    cy.route('GET','/projects/*/issues/*.json?filter={}');
-    clickOnElement('button.issue-form-command', 'last');
-  })
+
 
 })
