@@ -167,9 +167,8 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.xpath('//a/span[contains(text(),"Issues")]').click();
-    cy.route('GET','/projects/*/board/*').as('verifyIssuePage');
-    cy.wait('@verifyIssuePage');
-    cy.wait(400)
+    cy.wait('@createissuewindow');
+   // cy.wait(400)
     cy.location().should((loc) => {
       expect(loc.pathname).to.eq('/projects/' + user.projectId + '/board')
     })
