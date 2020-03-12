@@ -1,6 +1,6 @@
 {
   "baseUrl": "https://staging.codetree.com",
-  "testFiles": "creating_label_spec.js",
+  "testFiles": "edit_issue_spec.js",
   "video": false,
   "videoUploadOnPasses": false,
   "projectId": "613nzj",

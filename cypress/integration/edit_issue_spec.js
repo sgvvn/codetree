@@ -157,7 +157,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
     })
 
     it('verify editing issue functionality for updating epic EDISSU_008', () => {
-        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
+        cy.get('h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('a.epic-gear-link', 'last');
         cy.get('div[class="dropdown-menu epic-menu"] input[class="text-field small"]').last().type('EPIC Test Data DND')
