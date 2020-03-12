@@ -85,7 +85,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     clickOn('button.issue-form-command');
     clickOn('//a/span[contains(text(),"Issues")]');
     cy.wait('@verifyCreateIssue');
-    cy.get('div[data-id="backlog"] ul.issue-labels li').first().should('contain', random);
+    cy.get('div[data-id="backlog"] ul.issue-labels li').should('contain', random);
   })
 
   it('verify created lable add in create epic functionality CRLB_011', () => {
@@ -102,7 +102,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     clickOn('button[data-behavior="create-issue"]');
     clickOn('button.issue-form-command');
     cy.wait('@verifyEpic');
-    cy.get('div[data-id="backlog"] ul.issue-labels li').first().should('contain', random);
+    cy.get('div[data-id="backlog"] ul.issue-labels li').should('contain', random);
   })
 
   it('verify created label edit successfully CRLB_005 CRLB_006', () => {

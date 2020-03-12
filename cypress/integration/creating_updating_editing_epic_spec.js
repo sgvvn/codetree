@@ -18,6 +18,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
   after(function () {
     clickOn('//span[contains(text(),"Epics")]');
     cy.wait('@addEpics');
+
     cy.location().should((loc) => {
       expect(loc.search).to.eq('?type=epic')
       expect(loc.toString()).to.eq('https://staging.codetree.com/projects/'+user.projectId+'/board?type=epic')
