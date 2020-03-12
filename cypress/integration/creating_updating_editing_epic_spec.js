@@ -58,7 +58,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('@sidebar').eq(3).find('div label span').should('contain', "Move to top");
     cy.get('@sidebar').eq(3).find('div').last().find('label span').should('contain', "Move to bottom");
     cy.get('@sidebar').eq(0).find('h3').should('contain', "Repository");
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click()
+    cy.get('button.issue-form-command').click();
   })
 
   it('verify create epic functionality CREPIC_003', () => {
@@ -124,7 +124,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('.issue-form-milestone-menu .dropdown-menu .menu-item-filter .text-field').last().type('DND 1');
     cy.get('.issue-form-milestone-menu .dropdown-menu ul li.nav-focus').contains('DND 1').click();
     cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', 'DND 1');
-    clickOnElement('button.issue-form-command', 'last');
+    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
     cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
   })
