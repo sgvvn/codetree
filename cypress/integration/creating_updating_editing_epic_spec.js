@@ -126,7 +126,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('h3.board-card-title').contains(random).click();
     cy.wait('@verifyepicwindow');
     cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
-    cy.xpath('//div[@class="issue-form-stage-menu open"]/div/ul/li[2]/label/input').click();
+    cy.xpath('//input[@id="stage_backlog"]').last().click();
     cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
     cy.get('div[data-id="w8Uj"] div h3.board-card-title').should('contain',random);
@@ -136,7 +136,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('h3.board-card-title').contains(random).click();
     cy.wait('@verifyepicwindow');
     cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
-    cy.xpath('//div[@class="issue-form-stage-menu open"]/div/ul/li[3]/label/input').click();
+    cy.xpath('//input[@id="stage_in_progress"]').last().click();
     cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
     cy.get('div[data-id="qh6H"] div h3.board-card-title').should('contain',random);
@@ -155,7 +155,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.route('GET','/projects/*/issues/autocomplete_json.json?type=all&status=&per_page=20&page=1&keyword='+random).as('waitForAutocomplete')
     cy.wait('@waitForAutocomplete')
     cy.wait(300)
-    cy.get('#edit_modal_epic_autocomplete_container ul li').first().click();
+    cy.get('#edit_modal_epic_autocomplete_container ul li').should('be.visible').first().click();
     cy.get('table[class="compact-table epic-issues"] tbody tr').first().find('td span').should('contain', random);
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
