@@ -58,7 +58,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('@sidebar').eq(3).find('div label span').should('contain', "Move to top");
     cy.get('@sidebar').eq(3).find('div').last().find('label span').should('contain', "Move to bottom");
     cy.get('@sidebar').eq(0).find('h3').should('contain', "Repository");
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon')
+    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click()
   })
 
   it('verify create epic functionality CREPIC_003', () => {
@@ -70,7 +70,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.wait(400);
     cy.get('#title').type("Test Issue " + random);
     cy.contains('Create Issue').click();
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
+    cy.get('button.issue-form-command').click();
     cy.wait('@verifyEpic')
     cy.get('h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
@@ -155,7 +155,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.wait('@verifyepicwindow');
     cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
     cy.xpath('//input[@id="stage_backlog"]').last().click();
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon')
+    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click()
     cy.wait('@verifyEpic')
     cy.get('div[data-id="w8Uj"] div h3.board-card-title').should('contain',random);
   })
@@ -165,7 +165,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.wait('@verifyepicwindow');
     cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
     cy.xpath('//input[@id="stage_in_progress"]').last().click();
-    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon')
+    cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click()
     cy.wait('@verifyEpic')
     cy.get('div[data-id="qh6H"] div h3.board-card-title').should('contain',random);
   })
