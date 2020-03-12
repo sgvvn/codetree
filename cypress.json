@@ -1,6 +1,6 @@
 {
   "baseUrl": "https://staging.codetree.com",
-  "testFiles": "edit_issue_spec.js",
+  "testFiles": "creating_updating_editing_epic_spec.js",
   "video": false,
   "videoUploadOnPasses": false,
   "projectId": "613nzj",
