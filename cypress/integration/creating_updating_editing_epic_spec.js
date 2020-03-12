@@ -167,6 +167,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('button.issue-form-status').should('contain', 'Open').click();
+    cy.route('GET','/projects/*/issues/*.json?filter={}');
     clickOnElement('button.issue-form-command', 'last');
   })
 
