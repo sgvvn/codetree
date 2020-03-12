@@ -19,6 +19,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOn('//span[contains(text(),"Epics")]');
     cy.wait('@addEpics');
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
+   // cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('button.issue-form-status').should('contain', 'Open').click();
     clickOnElement('button.issue-form-command', 'last');
@@ -164,8 +165,9 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.route('GET','/projects/*/board/*').as('verifyIssuePage');
     cy.wait('@verifyIssuePage');
     cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
-    cy.get('h3.board-card-title').contains(random).click();
-    cy.get('span.issue-form-title').should('contain', random);
+    //cy.get('h3.board-card-title').contains(random).click();
+    cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
+    //cy.get('span.issue-form-title').should('contain', random);
     cy.get('button.issue-form-status').should('contain', 'Open').click();
     clickOnElement('button.issue-form-command', 'last');
   })
