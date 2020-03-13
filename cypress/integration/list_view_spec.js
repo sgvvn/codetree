@@ -1,7 +1,6 @@
 /// <reference types="Cypress" />
 import { randomString, clickOn, setTextOn, clickOnElement, clear, sidestep_login } from './util'
 
-
 describe('Codetree : List View Tests', () => {
     var random = randomString(4);
     var user;
@@ -27,7 +26,7 @@ describe('Codetree : List View Tests', () => {
         cy.location('pathname').should('include', 'projects/' + user.projectId + '/issues')
     })
 
-    it('verify issues filtered by selected milestone only MIBV_004', () => {
+    it('verify issues filtered by selected milestone only MITV_013', () => {
         cy.contains('+ Add a filter').click();
         cy.get('label[data-filter="milestone"]').click()
         cy.get('[data-name="milestone"]  .dropdown  .dropdown-menu').within(() => {
@@ -42,7 +41,7 @@ describe('Codetree : List View Tests', () => {
         })
     })
 
-    it('verify issues filtered by selected label only MIBV_005', () => {
+    it('verify issues filtered by selected label only MITV_016', () => {
         cy.contains('+ Add a filter').click();
         cy.get('label[data-filter="labels"]').click()
         cy.get('[data-name="labels"]  .dropdown  .dropdown-menu').within(() => {
@@ -57,7 +56,7 @@ describe('Codetree : List View Tests', () => {
         })
     })
 
-    it('verify issues filtered by selected epic only MIBV_006', () => {
+    it('verify issues filtered by selected epic only MITV_012', () => {
         cy.contains('+ Add a filter').click();
         cy.get('label[data-filter="epic"]').click()
         cy.get('[data-name="epic"]  .dropdown  .dropdown-menu').within(() => {
@@ -72,7 +71,7 @@ describe('Codetree : List View Tests', () => {
         })
     })
 
-    it('verify issues filtered by assignee MIBV_006', () => {
+    it('verify issues filtered by selected assignee MITV_014', () => {
         cy.contains('+ Add a filter').click();
         cy.get('label[data-filter="assignee"]').click()
         cy.get('[data-name="assignee"]  .dropdown  .dropdown-menu').within(() => {
@@ -80,11 +79,10 @@ describe('Codetree : List View Tests', () => {
             cy.get('ul .nav-focus label input').click();
             cy.get('.filter-button-container .button').click();
         })
-        cy.route('GET', '/projects/*/views?assignee='+user.name+'&include_counts=true&scope=issues&view_type=issues').as('verifyAssigneeFilter')
+        cy.route('GET', '/projects/*/views?assignee=' + user.name + '&include_counts=true&scope=issues&view_type=issues').as('verifyAssigneeFilter')
         cy.wait('@verifyAssigneeFilter')
         cy.get('.assignee .name').each(($el) => {
-            cy.wrap($el).invoke('text').should('contain',user.name)
+            cy.wrap($el).invoke('text').should('contain', user.name)
         })
     })
-
 })
