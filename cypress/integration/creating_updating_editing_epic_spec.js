@@ -78,7 +78,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('div.issue-form-references div #epic_issue_textcomplete').type(random);
     cy.route('GET','projects/*/issues/autocomplete_json.json?type=all&status=&per_page=20&page=1&keyword='+random).as('verifyAutoComplete')
     cy.wait('@verifyAutoComplete');
-    cy.wait(1000)
+    //cy.wait(1000)
     cy.get('#edit_modal_epic_autocomplete_container ul li').first().click();
     cy.get('table[class="compact-table epic-issues"] tbody tr').first().find('td span').should('contain', random);
     clickOnElement('button.issue-form-command', 'last');
