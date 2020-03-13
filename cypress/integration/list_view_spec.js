@@ -72,7 +72,7 @@ describe('Codetree : List View Tests', () => {
         })
     })
 
-    it.only('verify issues filtered by assignee MIBV_006', () => {
+    it('verify issues filtered by assignee MIBV_006', () => {
         cy.contains('+ Add a filter').click();
         cy.get('label[data-filter="assignee"]').click()
         cy.get('[data-name="assignee"]  .dropdown  .dropdown-menu').within(() => {
