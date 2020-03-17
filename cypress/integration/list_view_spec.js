@@ -69,7 +69,7 @@ describe('Codetree : List View Tests', () => {
         cy.get('.issue-title').should('contain', 'EPIC Test Data DND');
     })
 
-    it.only('verify to view ticket with Manual only MITV_005', () => {
+    it('verify to view ticket with Manual only MITV_005', () => {
         cy.get('#add-sorting-toggle').click();
         cy.get('input[value="manual"]').should('be.checked')
     })
