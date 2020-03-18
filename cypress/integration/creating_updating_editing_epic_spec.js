@@ -127,7 +127,6 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', 'DND 1');
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
-    cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
   })
 
