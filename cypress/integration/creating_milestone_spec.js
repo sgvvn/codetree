@@ -55,6 +55,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('@openMilestones').first().within(() => {
       cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
     })
+    cy.wait(400)
     MilestonePage.deleteMilestone(random,'openMileStone');
   })
 
@@ -80,6 +81,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
       const date = Cypress.moment().format('MMMM') + ' 28, ' + Cypress.moment().format('YYYY');
       cy.get('tr[data-item="milestone"] td.col-due-on').last().should("contain", date)
     })
+    cy.wait(400)
     MilestonePage.deleteMilestone(random,'openMileStone');
    })
 
