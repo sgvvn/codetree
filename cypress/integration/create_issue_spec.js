@@ -49,13 +49,13 @@ describe('Add Issue Functionality Tests', () => {
     })
 
     afterEach(function () {
-      cy.get('div[data-id="-"] div.issue-title').contains(random).parent().parent().click({ force: true });
+      cy.get('div[data-id="-"] div.issue-title').contains(random).click({ force: true });
       cy.route('GET', '/projects/*/issues/*/*').as('editIssue');
       cy.wait('@editIssue');
-      cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
-      cy.xpath('//input[@name="stage"]').last().click();
-      cy.get('button.issue-form-status').should('contain','Closed');
-      cy.route('GET','/projects/*/issues/*.json?filter={}');
+      cy.get('span.issue-form-title').should('contain', random);
+      cy.get('button.issue-form-status').should('contain', 'Open').click();
+      clickOnElement('button.issue-form-command', 'last');
+      cy.wait('@verifyCreateIssue');
     })
 
     it('verify user able to create issue successfully with default setting #CRISU_002', () => {
@@ -136,10 +136,10 @@ describe('Add Issue Functionality Tests', () => {
       cy.get('h3.board-card-title').contains(random).click({ force: true });
       cy.route('GET', '/projects/*/issues/*/*').as('editIssue');
       cy.wait('@editIssue');
-      cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
-      cy.xpath('//input[@name="stage"]').last().click();
-      cy.get('button.issue-form-status').should('contain','Closed');
-      cy.route('GET','/projects/*/issues/*.json?filter={}');
+      cy.get('span.issue-form-title').should('contain', random);
+      cy.get('button.issue-form-status').should('contain', 'Open').click();
+      clickOnElement('button.issue-form-command', 'last');
+      cy.wait('@verifyCreateIssue');
     })
 
     it('verify user able to create issue successfully with default setting #CRISU_002', () => {
@@ -169,7 +169,7 @@ describe('Add Issue Functionality Tests', () => {
       cy.get('button.issue-form-command').click();
       cy.wait('@verifyCreateIssue');
       cy.get('div[data-id="w8Uj"] h3.board-card-title').first().should('contain', random);
-      cy.get('div[data-id="w8Uj"] div[data-role="assignee"] span').should("have.attr", "data-original-title", "Assigned to " + user.name);
+      cy.get('div[data-id="w8Uj"] div[data-role="assignee"] span').first().should("have.attr", "data-original-title", "Assigned to " + user.name);
     })
 
     it('verify user able to create issue successfully with priority setting #CRISU_005', () => {

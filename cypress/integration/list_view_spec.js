@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 import { randomString, clickOn, setTextOn, clickOnElement, clear, sidestep_login } from './util'
 
-describe('Codetree : List View Tests', () => {
+describe('Codetree : List View Functionality Tests', () => {
     var random = randomString(4);
     var user;
     before(function () {

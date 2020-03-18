@@ -27,8 +27,18 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
         cy.route('GET', 'projects/*/views?type=epic&include_counts=true&scope=issues&view_type=boards').as('addEpics');
         cy.route('GET', '/projects/*/issues/*/edit').as('editIssue');
         cy.route('POST', '/projects/*/issues/*').as('moveIssueDone');
-    })
 
+    })
+    after(function () {
+        cy.xpath('//a/span[contains(text(),"Issues")]').click();
+        cy.get('h3.board-card-title').contains(random).click({ force: true });
+        cy.route('GET', '/projects/*/issues/*/*').as('editIssue');
+        cy.wait('@editIssue');
+        cy.get('span.issue-form-title').should('contain', random);
+        cy.get('button.issue-form-status').should('contain', 'Open').click();
+        clickOnElement('button.issue-form-command', 'last');
+        cy.wait('@verifyCreateIssue');
+    })
     context('At Open Milestone Window', () => {
 
         it('verify created milestone have hamburger, setting, progress bar, due date and View Task Board CHGMIL_001', () => {
@@ -84,7 +94,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
             MilestonePage.closeMilestone(random);
             MilestonePage.reopenMilestone(random);
         })
-        
+
         it('verify created milestone edit title successfully CHGMIL_005 CHGMIL_007', () => {
             MilestonePage.editMilestone(random, 'openMilestone');
         })
