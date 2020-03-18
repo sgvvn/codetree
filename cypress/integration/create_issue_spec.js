@@ -50,8 +50,7 @@ describe('Add Issue Functionality Tests', () => {
 
     afterEach(function () {
       cy.get('div[data-id="-"] div.issue-title').contains(random).click({ force: true });
-      cy.route('GET', '/projects/*/issues/*/*').as('editIssue');
-      cy.wait('@editIssue');
+      cy.wait(400)
       cy.get('span.issue-form-title').should('contain', random);
       cy.get('button.issue-form-status').should('contain', 'Open').click();
       clickOnElement('button.issue-form-command', 'last');
@@ -134,8 +133,7 @@ describe('Add Issue Functionality Tests', () => {
 
     afterEach(function () {
       cy.get('h3.board-card-title').contains(random).click({ force: true });
-      cy.route('GET', '/projects/*/issues/*/*').as('editIssue');
-      cy.wait('@editIssue');
+      cy.wait(400)
       cy.get('span.issue-form-title').should('contain', random);
       cy.get('button.issue-form-status').should('contain', 'Open').click();
       clickOnElement('button.issue-form-command', 'last');

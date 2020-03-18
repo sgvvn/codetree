@@ -78,7 +78,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('div.issue-form-references div #epic_issue_textcomplete').type(random);
     cy.route('GET','projects/*/issues/autocomplete_json.json?type=all&status=&per_page=20&page=1&keyword='+random).as('verifyAutoComplete')
     cy.wait('@verifyAutoComplete');
-    cy.wait('@verifyAutoComplete');
+    cy.wait(400)
     cy.get('#edit_modal_epic_autocomplete_container ul li').first().click();
     cy.get('table[class="compact-table epic-issues"] tbody tr').first().find('td span').should('contain', random);
     clickOnElement('button.issue-form-command', 'last');
@@ -139,7 +139,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain', 'enhancement');
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
-    cy.wait('@verifyEpic')
+    cy.wait(400)
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'enhancement');
   })
 
@@ -150,7 +150,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('span.username').last().should('contain', user.name).click()
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
-    cy.wait('@verifyEpic')
+    cy.wait(400)
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
   })
 
