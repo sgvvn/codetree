@@ -98,7 +98,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('div[data-errors-for="due_on"]').should("contain", "Due date must be greater than start date")
   })
 
-  it.skip('verify entered Start-Date & Due-Date should be clear when click on clear button #CRMIL_007', () => {
+  it('verify entered Start-Date & Due-Date should be clear when click on clear button #CRMIL_007', () => {
     clickOn('button.add-issue-carat');
     clickOn('a[data-component="new-milestone-controls"]');
     setTextOn('input.milestone-title', 'Test Milestone ' + random)

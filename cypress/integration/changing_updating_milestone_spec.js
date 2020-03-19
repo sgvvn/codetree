@@ -30,7 +30,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
 
     })
     after(function () {
-        cy.get('.sidebar-nav li a').first().click()
+        cy.get('.sidebar-nav a').first().click()
         cy.get('h3.board-card-title').contains(random).click({ force: true });
         cy.route('GET', '/projects/*/issues/*/*').as('editIssue');
         cy.wait('@editIssue');
