@@ -105,8 +105,10 @@ class MilestonePage {
 
     cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
     cy.get('@milestoneWindow').within(() => {
-      cy.get('td.col-milestone a').contains(title).parent().siblings('td.col-settings').children('a').should('be.visible');
-      cy.get('td.col-milestone a').contains(title).parent().nextAll('td.col-settings').children('a').click();
+      cy.get('td.col-milestone a').contains(title).parent().parent().within(()=>{
+        cy.get('td.col-settings a span').should('be.visible');
+        cy.get('td.col-settings a span').click();
+      })
       cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="delete"]').eq(0).click();    
       cy.wait('@verifyMilestoneView')
     })

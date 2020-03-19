@@ -23,14 +23,10 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
         cy.get('table[data-container="milestones"]').last().as('closeMilestones')
         cy.route('POST', '/projects/*/issues').as('createIssue');
         cy.route('GET', '/projects/*/cards/*?filter={}').as('verifyCreateIssue');
-        cy.route("GET", '/projects/*/cards/*?filter={"type":"epic"}').as('verifyEpic');
-        cy.route('GET', 'projects/*/views?type=epic&include_counts=true&scope=issues&view_type=boards').as('addEpics');
         cy.route('GET', '/projects/*/issues/*/edit').as('editIssue');
-        cy.route('POST', '/projects/*/issues/*').as('moveIssueDone');
-
     })
     after(function () {
-        cy.get('.sidebar-nav a').first().click()
+        cy.xpath('//a/span[contains(text(),"Issues")]').click();
         cy.get('h3.board-card-title').contains(random).click({ force: true });
         cy.route('GET', '/projects/*/issues/*/*').as('editIssue');
         cy.wait('@editIssue');
