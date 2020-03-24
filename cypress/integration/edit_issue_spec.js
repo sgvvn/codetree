@@ -142,6 +142,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('input[value="enhancement"]').last().click();
         cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain', 'enhancement');
         clickOnElement('button.issue-form-command', 'last');
+        cy.route('GET','/projects/*/cards/*?filter={}').as('verifyLabel')
         cy.wait('@verifyLabel');
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'enhancement');
     })
