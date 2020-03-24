@@ -63,7 +63,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
 
   it('verify create epic functionality CREPIC_003', () => {
     EpicPage.createEpic(random);
-  })
+  }) 
 
   it('verify added issue in epic add issue functionality #CREPIC_012', () => {
     cy.contains('Add Issue').click();
