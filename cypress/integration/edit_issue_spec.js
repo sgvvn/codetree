@@ -20,8 +20,9 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.route('GET', '/projects/*/issues/*/timeline.json').as('updateTitle');
         cy.route('POST', '/projects/*/issues').as('createIssue');
         cy.route('GET', '/projects/*/cards/*').as('verifyCreateIssue');
+        cy.route('GET','/projects/*/cards/*?filter={}').as('verifyLabel')
     })
-
+    
     it('verify fields at edit issue window EDISSU_001', () => {
         cy.contains('Add Issue').click();
         cy.wait(400);
@@ -142,7 +143,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('input[value="enhancement"]').last().click();
         cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain', 'enhancement');
         clickOnElement('button.issue-form-command', 'last');
-        cy.wait('@verifyCreateIssue');
+        cy.wait('@verifyLabel');
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'enhancement');
     })
 
