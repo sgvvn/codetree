@@ -20,7 +20,6 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.route('GET', '/projects/*/issues/*/timeline.json').as('updateTitle');
         cy.route('POST', '/projects/*/issues').as('createIssue');
         cy.route('GET', '/projects/*/cards/*').as('verifyCreateIssue');
-        cy.route('GET','/projects/*/cards/*?filter={}').as('verifyLabel')
     })
     
     it('verify fields at edit issue window EDISSU_001', () => {
