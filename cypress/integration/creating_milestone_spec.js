@@ -90,6 +90,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
     clickOn('input.milestone-submit');
     cy.get('div[data-errors-for="due_on"]').should("contain", "Due date must be greater than start date")
+    cy.get('.modal-header button.close').first().click();
   })
 
   it('verify entered Start-Date & Due-Date should be clear when click on clear button #CRMIL_007', () => {
