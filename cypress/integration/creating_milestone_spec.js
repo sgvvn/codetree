@@ -60,11 +60,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
   })
 
   it('verify to add milestone successfully with all data field #CRMIL_005', () => {
-    clickOn('button.add-issue-carat');
-    clickOn('a[data-component="new-milestone-controls"]');
-    setTextOn('input.milestone-title', 'Test Milestone ' + random)
-    cy.get('div.dr-input div div').first().click()
-    cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
+    MilestonePage.selectimiletone(random)
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
     if(Cypress.moment().format('DD') == '28'){
@@ -86,11 +82,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
    })
 
   it('verify Due-Date validation functionality at add milestone window #CRMIL_006', () => {
-    clickOn('button.add-issue-carat');
-    clickOn('a[data-component="new-milestone-controls"]');
-    setTextOn('input.milestone-title', 'Test Milestone ' + random)
-    cy.get('div.dr-input div div').first().click()
-    cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
+    MilestonePage.selectimiletone(random)
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
     cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
@@ -99,11 +91,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
   })
 
   it('verify entered Start-Date & Due-Date should be clear when click on clear button #CRMIL_007', () => {
-    clickOn('button.add-issue-carat');
-    clickOn('a[data-component="new-milestone-controls"]');
-    setTextOn('input.milestone-title', 'Test Milestone ' + random)
-    cy.get('div.dr-input div div').first().click()
-    cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
+    MilestonePage.selectimiletone(random)
     cy.get('div.dr-input div div').last().click()
     clickOnElement('ul.dr-day-list li[class="dr-day"]', "first")
     clickOn('a[data-behavior="clear-start-date"]')
