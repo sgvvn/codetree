@@ -13,6 +13,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
       user = users.grp1Collaborator;
     })
   })
+
   beforeEach(function () {
     cy.server();
     sidestep_login(user.publicId);
@@ -23,6 +24,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     random = randomString(4);
     cy.get('table[data-container="milestones"]').as('openMilestones')
   })
+
   it('verify fields at add milestone window #CRMIL_001 #CRMIL_002', () => {
     clickOn('button.add-issue-carat');
     cy.get('a[data-component="new-milestone-controls"]').should('be.visible').click();
@@ -42,40 +44,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     clickOn('input.milestone-submit');
     cy.get('div.form-field div[data-errors-for="title"]').should('contain', "Please enter a title");
   })
-  it('verify Due-Date validation functionality at add milestone window #CRMIL_006', () => {
-    MilestonePage.selectimiletone(random)
-    cy.get('ul.dr-day-list').children().should('have.length', 0)
-    cy.get('div.dr-input div div').last().click()
-    cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
-    clickOn('input.milestone-submit');
-    cy.get('div[data-errors-for="due_on"]').should("contain", "Due date must be greater than start date")
-    cy.get('.modal-header button.close').first().click();
-  })
-  it('verify entered Start-Date & Due-Date should be clear when click on clear button #CRMIL_007', () => {
-    MilestonePage.selectimiletone(random)
-    cy.get('div.dr-input div div').last().click()
-    clickOnElement('ul.dr-day-list li[class="dr-day"]', "first")
-    clickOn('a[data-behavior="clear-start-date"]')
-    clickOn('a[data-behavior="clear-due-date"]')
-    cy.get('div.dr-input div div').first().should('have.attr', 'placeholder', 'Enter an optional start date')
-    cy.get('div.dr-input div div').last().should('have.attr', 'placeholder', 'Enter an optional due date')
-    cy.get('.modal-header button.close').first().click();
-  })
-  context('At Milestone View', () => {
-  beforeEach(function () {
-    cy.server();
-    sidestep_login(user.publicId);
-    cy.get('.sidebar').should('be.visible');
-    clickOn('//span[contains(text(),"Milestones")]')
-    cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
-    cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyCreateMilestone');
-    random = randomString(4);
-    cy.get('table[data-container="milestones"]').as('openMilestones')
-  })
-  afterEach(function(){
-    MilestonePage.deleteMilestone(random,'openMileStone');
-  })
-  
+
   it('verify add milestone with all empty field expect title #CRMIL_004', () => {
     clickOn('button.add-issue-carat');
     clickOn('a[data-component="new-milestone-controls"]');
@@ -87,7 +56,8 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('@openMilestones').first().within(() => {
       cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
     })
-    
+    cy.wait(400)
+    MilestonePage.deleteMilestone(random,'openMileStone');
   })
 
   it('verify to add milestone successfully with all data field #CRMIL_005', () => {
@@ -110,7 +80,27 @@ describe('Codetree : Add Milestones functionality Tests', () => {
       cy.get('tr[data-item="milestone"] td.col-due-on').last().should("contain", date)
     })
     cy.wait(400)
+    MilestonePage.deleteMilestone(random,'openMileStone');
    })
 
-})
+  it('verify Due-Date validation functionality at add milestone window #CRMIL_006', () => {
+    MilestonePage.selectimiletone(random)
+    cy.get('ul.dr-day-list').children().should('have.length', 0)
+    cy.get('div.dr-input div div').last().click()
+    cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
+    clickOn('input.milestone-submit');
+    cy.get('div[data-errors-for="due_on"]').should("contain", "Due date must be greater than start date")
+  })
+
+  it('verify entered Start-Date & Due-Date should be clear when click on clear button #CRMIL_007', () => {
+    MilestonePage.selectimiletone(random)
+    cy.get('div.dr-input div div').last().click()
+    clickOnElement('ul.dr-day-list li[class="dr-day"]', "first")
+    clickOn('a[data-behavior="clear-start-date"]')
+    clickOn('a[data-behavior="clear-due-date"]')
+    cy.get('div.dr-input div div').first().should('have.attr', 'placeholder', 'Enter an optional start date')
+    cy.get('div.dr-input div div').last().should('have.attr', 'placeholder', 'Enter an optional due date')
+    cy.get('.modal-header button.close').first().click();
+  })
+
 })
