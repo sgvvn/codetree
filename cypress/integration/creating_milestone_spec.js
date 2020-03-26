@@ -99,5 +99,4 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('div.dr-input div div').first().should('have.attr', 'placeholder', 'Enter an optional start date')
     cy.get('div.dr-input div div').last().should('have.attr', 'placeholder', 'Enter an optional due date')
   })
-
 })
