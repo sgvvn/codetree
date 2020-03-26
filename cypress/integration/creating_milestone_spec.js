@@ -55,12 +55,12 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('@openMilestones').first().within(() => {
       cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
     })
-    cy.wait(400)
+    cy.wait(800)
     MilestonePage.deleteMilestone(random,'openMileStone');
   })
 
   it('verify to add milestone successfully with all data field #CRMIL_005', () => {
-    MilestonePage.setmiletone(random);
+    MilestonePage.setmilestone(random);
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
     if(Cypress.moment().format('DD') == '28'){
@@ -82,7 +82,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
    })
 
   it('verify Due-Date validation functionality at add milestone window #CRMIL_006', () => {
-    MilestonePage.setmiletone(random);
+    MilestonePage.setmilestone(random);
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
     cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
@@ -91,7 +91,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
   })
 
   it('verify entered Start-Date & Due-Date should be clear when click on clear button #CRMIL_007', () => {
-    MilestonePage.setmiletone(random);
+    MilestonePage.setmilestone(random);
     cy.get('div.dr-input div div').last().click()
     clickOnElement('ul.dr-day-list li[class="dr-day"]', "first")
     clickOn('a[data-behavior="clear-start-date"]')
