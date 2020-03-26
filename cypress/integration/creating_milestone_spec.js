@@ -53,28 +53,27 @@ describe('Codetree : Add Milestones functionality Tests', () => {
       cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
       cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyCreateMilestone');
       random = randomString(4);
-      cy.log(">>>>>"+random)
       cy.get('table[data-container="milestones"]').as('openMilestones')
     })
-    afterEach(function(){
-      MilestonePage.deleteMilestone(random,'openMileStone');
-    })
+   
   it('verify add milestone with all empty field expect title #CRMIL_004', () => {
     clickOn('button.add-issue-carat');
     clickOn('a[data-component="new-milestone-controls"]');
-    setTextOn('input.milestone-title', 'Test Milestone ' + random)
+    setTextOn('input.milestone-title', 'Test Milestone abcd')
     clickOn('input.milestone-submit');
     cy.wait('@verifyCreateMilestone');
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
     cy.wait(1000)
     cy.get('@openMilestones').first().within(() => {
-      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
+      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", 'abcd')
     })
     
   })
-
+  it('verify created milestone delete successfully ', () => {
+    MilestonePage.deleteMilestone('abcd', 'openMilestone');
+})
   it('verify to add milestone successfully with all data field #CRMIL_005', () => {
-    MilestonePage.setmilestone(random);
+    MilestonePage.setmilestone("wxyz");
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
     if(Cypress.moment().format('DD') == '28'){
@@ -88,11 +87,14 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
     cy.wait(1000)
     cy.get('@openMilestones').first().within(() => {
-      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
+      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", wxyz)
       const date = Cypress.moment().format('MMMM') + ' 28, ' + Cypress.moment().format('YYYY');
       cy.get('tr[data-item="milestone"] td.col-due-on').last().should("contain", date)
     })
    })
+   it('verify created milestone delete successfully ', () => {
+    MilestonePage.deleteMilestone('wxyz', 'openMilestone');
+})
   })
   it('verify Due-Date validation functionality at add milestone window #CRMIL_006', () => {
     MilestonePage.setmilestone(random);
