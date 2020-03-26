@@ -114,7 +114,7 @@ class MilestonePage {
       cy.get('td.col-milestone a').should('not.contain', title);
     })
   }
-  selectimiletone(title){
+  setmiletone(title){
     clickOn('button.add-issue-carat');
     clickOn('a[data-component="new-milestone-controls"]');
     setTextOn('input.milestone-title', 'Test Milestone ' + title)

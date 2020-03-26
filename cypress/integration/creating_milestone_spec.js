@@ -52,7 +52,6 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     clickOn('input.milestone-submit');
     cy.wait('@verifyCreateMilestone');
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
-    cy.wait(400)
     cy.get('@openMilestones').first().within(() => {
       cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
     })
@@ -61,7 +60,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
   })
 
   it('verify to add milestone successfully with all data field #CRMIL_005', () => {
-    MilestonePage.selectimiletone(random)
+    MilestonePage.setmiletone(random);
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
     if(Cypress.moment().format('DD') == '28'){
@@ -73,7 +72,6 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     clickOn('input.milestone-submit');
     cy.wait('@verifyCreateMilestone');
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
-    cy.wait(400)
     cy.get('@openMilestones').first().within(() => {
       cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
       const date = Cypress.moment().format('MMMM') + ' 28, ' + Cypress.moment().format('YYYY');
@@ -84,24 +82,22 @@ describe('Codetree : Add Milestones functionality Tests', () => {
    })
 
   it('verify Due-Date validation functionality at add milestone window #CRMIL_006', () => {
-    MilestonePage.selectimiletone(random)
+    MilestonePage.setmiletone(random);
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
     cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
     clickOn('input.milestone-submit');
     cy.get('div[data-errors-for="due_on"]').should("contain", "Due date must be greater than start date")
-    cy.get('.modal-header button.close').first().click();
   })
 
   it('verify entered Start-Date & Due-Date should be clear when click on clear button #CRMIL_007', () => {
-    MilestonePage.selectimiletone(random)
+    MilestonePage.setmiletone(random);
     cy.get('div.dr-input div div').last().click()
     clickOnElement('ul.dr-day-list li[class="dr-day"]', "first")
     clickOn('a[data-behavior="clear-start-date"]')
     clickOn('a[data-behavior="clear-due-date"]')
     cy.get('div.dr-input div div').first().should('have.attr', 'placeholder', 'Enter an optional start date')
     cy.get('div.dr-input div div').last().should('have.attr', 'placeholder', 'Enter an optional due date')
-    cy.get('.modal-header button.close').first().click();
   })
 
 })
