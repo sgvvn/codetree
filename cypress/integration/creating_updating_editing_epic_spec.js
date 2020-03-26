@@ -41,6 +41,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('div.issue-form-sidebar div.issue-form-sidebar-item').as('sidebar');
     cy.route('GET', '/projects/*/issues/*/edit').as('verifyepicwindow')
     cy.route('GET', '/projects/*/cards/*').as('verifyEpic');
+    cy.route('GET','/projects/*/board/sizes.json?type=epic').as('updateEpicBoard')
   })
 
   it('verify all fields at add epics window CREPIC_001 CREPIC_002', () => {
@@ -63,7 +64,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
 
   it('verify create epic functionality CREPIC_003', () => {
     EpicPage.createEpic(random);
-  }) 
+  })
 
   it('verify added issue in epic add issue functionality #CREPIC_012', () => {
     cy.contains('Add Issue').click();
@@ -91,7 +92,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('button.issue-form-status').should('contain', 'Open').click();
-    cy.route('GET','/projects/*/issues/*.json?filter={}');
+    cy.wait('@verifyEpic')
     clickOnElement('button.issue-form-command', 'last');
   })
 
@@ -128,6 +129,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', 'DND 1');
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
+    cy.wait('@updateEpicBoard')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
   })
 
@@ -139,8 +141,9 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain', 'enhancement');
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
-    cy.wait(400)
-    cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'enhancement');
+    cy.wait('@updateEpicBoard')
+    cy.wait('@verifyEpic')
+    cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').last().should('contain', 'enhancement');
   })
 
   it('verify add epic to select assigned user functionality #CREPIC_011', () => {
@@ -150,7 +153,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('span.username').last().should('contain', user.name).click()
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
-    cy.wait(400)
+    cy.wait('@updateEpicBoard')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
   })
 

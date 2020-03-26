@@ -52,6 +52,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     clickOn('input.milestone-submit');
     cy.wait('@verifyCreateMilestone');
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
+    cy.wait(200)
     cy.get('@openMilestones').first().within(() => {
       cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
     })
@@ -72,6 +73,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     clickOn('input.milestone-submit');
     cy.wait('@verifyCreateMilestone');
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
+    cy.wait(200)
     cy.get('@openMilestones').first().within(() => {
       cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
       const date = Cypress.moment().format('MMMM') + ' 28, ' + Cypress.moment().format('YYYY');
