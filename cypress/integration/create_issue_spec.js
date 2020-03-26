@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 
 import { randomString, clickOnElement, clickOn, sidestep_login } from './util'
-
+const IssuePage = new (require('../pages/IssuePage'))();
 describe('Add Issue Functionality Tests', () => {
   var random;
   var user;
@@ -49,21 +49,12 @@ describe('Add Issue Functionality Tests', () => {
     })
 
     afterEach(function () {
-      cy.get('div[data-id="-"] div.issue-title').contains(random).click({ force: true });
-      cy.wait(400)
-      cy.get('span.issue-form-title').should('contain', random);
-      cy.get('button.issue-form-status').should('contain', 'Open').click();
-      clickOnElement('button.issue-form-command', 'last');
+      IssuePage.closeIssue(random)
       cy.wait('@verifyCreateIssue');
     })
 
     it('verify user able to create issue successfully with default setting #CRISU_002', () => {
-      cy.contains('Add Issue').click();
-      cy.wait(400);
-      cy.get('#title').type("Test Issue " + random);
-      cy.contains('Create Issue').click();
-      cy.wait('@createIssue');
-      cy.get('button.issue-form-command').click();
+      IssuePage.createIssue(random);
       cy.wait('@verifyCreateIssue');
       cy.get('div.flash-tab-container div').last().should('contain', 'Issue created:').and('contain',random)
       cy.get('div[data-id="-"] div.issue-title').first().should('contain', random);
@@ -141,12 +132,7 @@ describe('Add Issue Functionality Tests', () => {
     })
 
     it('verify user able to create issue successfully with default setting #CRISU_002', () => {
-      cy.contains('Add Issue').click();
-      cy.wait(400);
-      cy.get('#title').type("Test Issue " + random);
-      cy.contains('Create Issue').click();
-      cy.wait('@createIssue');
-      cy.get('button.issue-form-command').click();
+      IssuePage.createIssue(random);
       cy.wait('@verifyCreateIssue');
       cy.get('div[data-id="backlog"] h3.board-card-title').first().should('contain', random);
     })
