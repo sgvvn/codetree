@@ -73,7 +73,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     MilestonePage.deleteMilestone('abcd', 'openMilestone');
 })
   it('verify to add milestone successfully with all data field #CRMIL_005', () => {
-    MilestonePage.setmilestone("wxyz");
+    MilestonePage.setmilestone('wxyz');
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
     if(Cypress.moment().format('DD') == '28'){
@@ -87,7 +87,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
     cy.wait(1000)
     cy.get('@openMilestones').first().within(() => {
-      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", wxyz)
+      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", 'wxyz')
       const date = Cypress.moment().format('MMMM') + ' 28, ' + Cypress.moment().format('YYYY');
       cy.get('tr[data-item="milestone"] td.col-due-on').last().should("contain", date)
     })
