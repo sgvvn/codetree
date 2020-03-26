@@ -104,7 +104,7 @@ class MilestonePage {
     }
 
     cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
-    cy.xpath('//a[contains(text(),"'+title+'")]/../../td[@class="col-settings"]/a/span').click(); 
+    cy.xpath('//a[contains(text(),"'+title+'")]/../../td[@class="col-settings"]/a/span').click({force :true }); 
     cy.get('@milestoneWindow').within(() => {
       cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="delete"]').eq(0).click();    
       cy.wait('@verifyMilestoneView')
