@@ -55,6 +55,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
                 cy.get('td.col-controls').should('contain', 'View Task Board');
             });
         })
+        
         it('verify created milestone page for Milestone list view to Percent completion navigation bar CHGMIL_002', () => {
 
             cy.get('@openMilestones').within(() => {
@@ -63,6 +64,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
             cy.location('pathname').should('include', 'projects/' + user.projectId + '/burndowns/')
             cy.get('h2').should('contain', "Burndowns")
         })
+
         it('verify new created milestone not assinged to any issue in both List and Board view CHGMIL_003', () => {
             cy.get('@openMilestones').within(() => {
                 cy.get('td.col-milestone a').contains(random).parent().siblings('td.col-controls').click();
@@ -98,8 +100,10 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
         it('verify created milestone edit title successfully CHGMIL_005 CHGMIL_007', () => {
             MilestonePage.editMilestone(random, 'openMilestone');
         })
+
         it('verify created milestone delete successfully CHGMIL_005 CHGMIL_008', () => {
             MilestonePage.deleteMilestone(random, 'openMilestone');
+            MilestonePage.deleteMilestone('abcd', 'openMilestone');
         })
     })
 }) 

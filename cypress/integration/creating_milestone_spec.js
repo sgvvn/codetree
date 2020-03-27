@@ -44,18 +44,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     clickOn('input.milestone-submit');
     cy.get('div.form-field div[data-errors-for="title"]').should('contain', "Please enter a title");
   })
-  context('At Milstone ', () => {
-    beforeEach(function () {
-      cy.server();
-      sidestep_login(user.publicId);
-      cy.get('.sidebar').should('be.visible');
-      clickOn('//span[contains(text(),"Milestones")]')
-      cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
-      cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyCreateMilestone');
-      random = randomString(4);
-      cy.get('table[data-container="milestones"]').as('openMilestones')
-    })
-   
+
   it('verify add milestone with all empty field expect title #CRMIL_004', () => {
     clickOn('button.add-issue-carat');
     clickOn('a[data-component="new-milestone-controls"]');
@@ -63,39 +52,36 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     clickOn('input.milestone-submit');
     cy.wait('@verifyCreateMilestone');
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
-    cy.wait(1000)
     cy.get('@openMilestones').first().within(() => {
       cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", 'abcd')
     })
-    
   })
-  it('verify created milestone delete successfully ', () => {
-    MilestonePage.deleteMilestone('abcd', 'openMilestone');
-})
+
   it('verify to add milestone successfully with all data field #CRMIL_005', () => {
-    MilestonePage.setmilestone('wxyz');
+    cy.get('@openMilestones').first().within(() => {
+      cy.get('td.col-milestone a').contains('abcd').parent().siblings('td.col-settings').should('be.visible').click();
+      cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="edit"]').eq(0).click();
+    })
+    cy.get('div.dr-input div div').first().click()
+    cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
+
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
-    if(Cypress.moment().format('DD') == '28'){
+    if (Cypress.moment().format('DD') == '28') {
       cy.get('ul.dr-day-list li[class="dr-day dr-current"]').contains('28').click();
     }
-    else{
+    else {
       cy.get('ul.dr-day-list li[class="dr-day"]').contains('28').last().click();
     }
-    clickOn('input.milestone-submit');
-    cy.wait('@verifyCreateMilestone');
-    cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
-    cy.wait(1000)
+    cy.get('[value="Save Milestone"]').should('be.visible').click();
+    cy.wait('@verifyCreateMilestone')
     cy.get('@openMilestones').first().within(() => {
-      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", 'wxyz')
+      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", 'abcd')
       const date = Cypress.moment().format('MMMM') + ' 28, ' + Cypress.moment().format('YYYY');
       cy.get('tr[data-item="milestone"] td.col-due-on').last().should("contain", date)
     })
-   })
-   it('verify created milestone delete successfully ', () => {
-    MilestonePage.deleteMilestone('wxyz', 'openMilestone');
-})
   })
+
   it('verify Due-Date validation functionality at add milestone window #CRMIL_006', () => {
     MilestonePage.setmilestone(random);
     cy.get('ul.dr-day-list').children().should('have.length', 0)
