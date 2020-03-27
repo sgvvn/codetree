@@ -13,7 +13,8 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "cypress": "^3.8.3",
-    "cypress-xpath": "^1.4.0"
+    "cypress": "^4.2.0",
+    "cypress-xpath": "^1.4.0",
+    "minimist": "^1.2.5"
   }
 }
