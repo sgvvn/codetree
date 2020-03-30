@@ -74,9 +74,9 @@ describe('Add Issue Functionality Tests', () => {
       cy.wait('@createIssue');
       cy.get('button.issue-form-command').click();
       cy.wait('@verifyCreateIssue');
-      cy.get('div[data-id="-"] div.issue-title').should("contain", random);
-      cy.get('div[data-id="-"] div.issue-stage').should("contain", "Backlog");
-      cy.get('span.assignees span.name').should("contain", user.name);
+      cy.get('div[data-id="-"] div.issue-title').first().should("contain", random);
+      cy.get('div[data-id="-"] div.issue-stage').first().should("contain", "Backlog");
+      cy.get('span.assignees span.name').first().should("contain", user.name);
     })
 
     it('verify user able to create issue successfully with priority setting #CRISU_005', () => {
@@ -101,7 +101,7 @@ describe('Add Issue Functionality Tests', () => {
       cy.wait('@createIssue');
       clickOn('button.issue-form-command');
       cy.wait('@verifyCreateIssue');
-      cy.get('div[data-id="-"] div.issue-title').should('contain', random);
+      cy.get('div[data-id="-"] div.issue-title').first().should('contain', random);
       cy.get('div[data-id="-"] div.issue-stage').first().should("contain", "In Progress");
     })
   })
@@ -152,8 +152,8 @@ describe('Add Issue Functionality Tests', () => {
       cy.wait('@createIssue');
       cy.get('button.issue-form-command').click();
       cy.wait('@verifyCreateIssue');
-      cy.get('div[data-id="w8Uj"] h3.board-card-title').should('contain', random);
-      cy.get('div[data-id="w8Uj"] div[data-role="assignee"] span').should("have.attr", "data-original-title", "Assigned to " + user.name);
+      cy.get('div[data-id="w8Uj"] h3.board-card-title').first().should('contain', random);
+      cy.get('div[data-id="w8Uj"] div[data-role="assignee"] span').first().should("have.attr", "data-original-title", "Assigned to " + user.name);
     })
 
     it('verify user able to create issue successfully with priority setting #CRISU_005', () => {
@@ -178,7 +178,7 @@ describe('Add Issue Functionality Tests', () => {
       cy.wait('@createIssue');
       clickOn('button.issue-form-command');
       cy.wait('@verifyCreateIssue');
-      cy.get('div[data-id="qh6H"] h3.board-card-title').should('contain', random);
+      cy.get('div[data-id="qh6H"] h3.board-card-title').first().should('contain', random);
     })
   })
 })
