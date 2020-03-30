@@ -23,7 +23,7 @@ describe('Codetree : Create Project Functionality Tests', () => {
         cy.get('[name="button"]').as('createProject')
     })
 
-    it.only('verify fields at create project page CP_001', () => {
+    it('verify fields at create project page CP_001', () => {
         cy.get('[name="name"]').should('have.attr', 'placeholder', 'My Awesome App')
         cy.get('.option-title').should((div)=>{
            expect(div.first(),'issue prioritize').contain('By Milestone');
