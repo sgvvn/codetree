@@ -103,7 +103,7 @@ describe('Codetree : Changing, Updateing And Deleting Milestones functionality T
 
         it('verify created milestone delete successfully CHGMIL_005 CHGMIL_008', () => {
             MilestonePage.deleteMilestone(random, 'openMilestone');
-            MilestonePage.deleteMilestone('abcd', 'openMilestone');
+            MilestonePage.deleteMilestone('abcd', 'openMilestone'); 
         })
     })
 }) 
