@@ -36,7 +36,6 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('div.dr-input div div').first().should('have.attr', 'placeholder', 'Enter an optional start date');
     cy.get('div.dr-input div div').last().should('have.attr', 'placeholder', 'Enter an optional due date');
     cy.get('input.milestone-submit').should('be.visible');
-    cy.get('.modal-header button.close').first().click();
   })
 
   it('verify title validation functionality at add milestone window CRMIL_003', () => {
@@ -49,60 +48,56 @@ describe('Codetree : Add Milestones functionality Tests', () => {
   it('verify add milestone with all empty field expect title #CRMIL_004', () => {
     clickOn('button.add-issue-carat');
     clickOn('a[data-component="new-milestone-controls"]');
-    setTextOn('input.milestone-title', 'Test Milestone ' + random)
+    setTextOn('input.milestone-title', 'Test Milestone abcd')
     clickOn('input.milestone-submit');
     cy.wait('@verifyCreateMilestone');
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
-    cy.wait(400)
     cy.get('@openMilestones').first().within(() => {
-      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
+      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", 'abcd')
     })
-    cy.wait(400)
-    MilestonePage.deleteMilestone(random,'openMileStone');
   })
 
   it('verify to add milestone successfully with all data field #CRMIL_005', () => {
-    MilestonePage.setmiletone(random);
+    cy.get('@openMilestones').first().within(() => {
+      cy.get('td.col-milestone a').contains('abcd').parent().siblings('td.col-settings').should('be.visible').click();
+      cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="edit"]').eq(0).click();
+    })
+    cy.get('div.dr-input div div').first().click()
+    cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
+
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
-    if(Cypress.moment().format('DD') == '28'){
+    if (Cypress.moment().format('DD') == '28') {
       cy.get('ul.dr-day-list li[class="dr-day dr-current"]').contains('28').click();
     }
-    else{
+    else {
       cy.get('ul.dr-day-list li[class="dr-day"]').contains('28').last().click();
     }
-    clickOn('input.milestone-submit');
-    cy.wait('@verifyCreateMilestone');
-    cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
-    cy.wait(400)
+    cy.get('[value="Save Milestone"]').should('be.visible').click();
+    cy.wait('@verifyCreateMilestone')
     cy.get('@openMilestones').first().within(() => {
-      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
+      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", 'abcd')
       const date = Cypress.moment().format('MMMM') + ' 28, ' + Cypress.moment().format('YYYY');
       cy.get('tr[data-item="milestone"] td.col-due-on').last().should("contain", date)
     })
-    cy.wait(400)
-    MilestonePage.deleteMilestone(random,'openMileStone');
-   })
+  })
 
   it('verify Due-Date validation functionality at add milestone window #CRMIL_006', () => {
-    MilestonePage.setmiletone(random);
+    MilestonePage.setMilestone(random);
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
     cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
     clickOn('input.milestone-submit');
     cy.get('div[data-errors-for="due_on"]').should("contain", "Due date must be greater than start date")
-    cy.get('.modal-header button.close').first().click();
   })
 
   it('verify entered Start-Date & Due-Date should be clear when click on clear button #CRMIL_007', () => {
-    MilestonePage.setmiletone(random);
+    MilestonePage.setMilestone(random);
     cy.get('div.dr-input div div').last().click()
     clickOnElement('ul.dr-day-list li[class="dr-day"]', "first")
     clickOn('a[data-behavior="clear-start-date"]')
     clickOn('a[data-behavior="clear-due-date"]')
     cy.get('div.dr-input div div').first().should('have.attr', 'placeholder', 'Enter an optional start date')
     cy.get('div.dr-input div div').last().should('have.attr', 'placeholder', 'Enter an optional due date')
-    cy.get('.modal-header button.close').first().click();
   })
-
 })

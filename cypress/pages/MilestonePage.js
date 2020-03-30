@@ -13,10 +13,10 @@ class MilestonePage {
     cy.get('ul.dr-day-list li[class="dr-day"]').first().click();
     cy.get('ul.dr-day-list').children().should('have.length', 0)
     cy.get('div.dr-input div div').last().click()
-    if(Cypress.moment().format('DD') == '28'){
+    if (Cypress.moment().format('DD') == '28') {
       cy.get('ul.dr-day-list li[class="dr-day dr-current"]').contains('28').click();
     }
-    else{
+    else {
       cy.get('ul.dr-day-list li[class="dr-day"]').contains('28').last().click();
     }
     clickOn('input.milestone-submit');
@@ -58,7 +58,7 @@ class MilestonePage {
       cy.get('td.col-milestone a').should('contain', 'Updated ' + title);
     })
   }
-  
+
   closeMilestone(title) {
     cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
     cy.get('table[data-container="milestones"]').first().as('openMilestones')
@@ -75,7 +75,7 @@ class MilestonePage {
     cy.get('@closeMilestones').within(() => {
       cy.get('td.col-milestone a').should('contain', title);
     })
-   
+
   }
 
   reopenMilestone(title) {
@@ -95,7 +95,7 @@ class MilestonePage {
     })
   }
 
-  deleteMilestone(title,typeOfMilestone) {
+  deleteMilestone(title, typeOfMilestone) {
     if (typeOfMilestone == 'closedMileStone') {
       cy.get('table[data-container="milestones"]').last().as('milestoneWindow');
     }
@@ -104,9 +104,9 @@ class MilestonePage {
     }
 
     cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyMilestoneView');
-    cy.xpath('//a[contains(text(),"'+title+'")]/../../td[@class="col-settings"]/a/span').click(); 
+    cy.xpath('//a[contains(text(),"' + title + '")]/../../td[@class="col-settings"]/a/span').click();
     cy.get('@milestoneWindow').within(() => {
-      cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="delete"]').eq(0).click();    
+      cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="delete"]').eq(0).click();
       cy.wait('@verifyMilestoneView')
     })
     cy.get('@milestoneWindow').within(() => {
@@ -114,7 +114,7 @@ class MilestonePage {
     })
   }
 
-  setmiletone(title){
+  setMilestone(title) {
     clickOn('button.add-issue-carat');
     clickOn('a[data-component="new-milestone-controls"]');
     setTextOn('input.milestone-title', 'Test Milestone ' + title)

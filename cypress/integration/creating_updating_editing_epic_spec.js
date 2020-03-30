@@ -21,7 +21,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
 
     cy.location().should((loc) => {
       expect(loc.search).to.eq('?type=epic')
-      expect(loc.toString()).to.eq('https://staging.codetree.com/projects/'+user.projectId+'/board?type=epic')
+      expect(loc.toString()).to.eq('https://staging.codetree.com/projects/' + user.projectId + '/board?type=epic')
     })
     cy.wait(300);
     cy.get('h3.board-card-title').contains(random).parent().click();
@@ -41,7 +41,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('div.issue-form-sidebar div.issue-form-sidebar-item').as('sidebar');
     cy.route('GET', '/projects/*/issues/*/edit').as('verifyepicwindow')
     cy.route('GET', '/projects/*/cards/*').as('verifyEpic');
-    cy.route('GET','/projects/*/board/sizes.json?type=epic').as('updateEpicBoard')
+    cy.route('GET', '/projects/*/board/sizes.json?type=epic').as('updateEpicBoard')
   })
 
   it('verify all fields at add epics window CREPIC_001 CREPIC_002', () => {
@@ -77,7 +77,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('div.issue-form-references div #epic_issue_textcomplete').click();
     cy.get('div.issue-form-references div #epic_issue_textcomplete').type(random);
-    cy.route('GET','projects/*/issues/autocomplete_json.json?type=all&status=&per_page=20&page=1&keyword='+random).as('verifyAutoComplete')
+    cy.route('GET', 'projects/*/issues/autocomplete_json.json?type=all&status=&per_page=20&page=1&keyword=' + random).as('verifyAutoComplete')
     cy.wait('@verifyAutoComplete');
     cy.wait(400)
     cy.get('#edit_modal_epic_autocomplete_container ul li').first().click();
@@ -109,6 +109,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('ul.issue-form-priority-list li button[data-behavior="move-bottom"]').should('contain', "Move to bottom").click();
     cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
     cy.wait('@verifyEpic')
+    cy.wait('@updateEpicBoard')
     cy.get('div[data-id="backlog"] div h3.board-card-title').last().should('contain', random);
   })
 
@@ -117,6 +118,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('ul.issue-form-priority-list li button[data-behavior="move-top"]').should('contain', "Move to top").click();
     cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
     cy.wait('@verifyEpic')
+    cy.wait('@updateEpicBoard')
     cy.get('div[data-id="backlog"] div h3.board-card-title').first().should('contain', random);
   })
 
@@ -130,6 +132,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
+    cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
   })
 
@@ -154,6 +157,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
+    cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
   })
 
@@ -164,7 +168,8 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.xpath('//input[@id="stage_backlog"]').last().click();
     cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
-    cy.get('div[data-id="w8Uj"] div h3.board-card-title').should('contain',random);
+    cy.wait('@updateEpicBoard')
+    cy.get('div[data-id="w8Uj"] div h3.board-card-title').should('contain', random);
   })
 
   it('verify added epic move to in-progress state CREPIC_008 ', () => {
@@ -174,6 +179,6 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.xpath('//input[@id="stage_in_progress"]').last().click();
     cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
-    cy.get('div[data-id="qh6H"] div h3.board-card-title').should('contain',random);
+    cy.get('div[data-id="qh6H"] div h3.board-card-title').should('contain', random);
   })
 })

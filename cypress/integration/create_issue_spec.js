@@ -20,18 +20,18 @@ describe('Add Issue Functionality Tests', () => {
   })
 
   it('verify fields at create issue window #CRISU_001 #CRISU_003', () => {
-      cy.contains('Add Issue').click();
-      cy.get('#title').should('be.visible');
-      cy.get('span.username').should('be.visible');
-      cy.get('span[data-section="stage-title"]').then(($ele) => {
-        expect($ele.text()).to.eq("Untriaged");
-      })
-      cy.get('div.octicon-wrapper .octicon').first().should('be.visible');
-      cy.get('span[data-section="epic-title"]').last().should('be.visible');
-      cy.contains('Create Issue').should('be.visible').click();
-      cy.get('div[data-errors-for="title"]').first().should('contain', "Please enter an issue title");
-      cy.get('button.issue-form-command').click();
+    cy.contains('Add Issue').click();
+    cy.get('#title').should('be.visible');
+    cy.get('span.username').should('be.visible');
+    cy.get('span[data-section="stage-title"]').then(($ele) => {
+      expect($ele.text()).to.eq("Untriaged");
     })
+    cy.get('div.octicon-wrapper .octicon').first().should('be.visible');
+    cy.get('span[data-section="epic-title"]').last().should('be.visible');
+    cy.contains('Create Issue').should('be.visible').click();
+    cy.get('div[data-errors-for="title"]').first().should('contain', "Please enter an issue title");
+    cy.get('button.issue-form-command').click();
+  })
 
   context('At List View', () => {
     beforeEach(function () {
@@ -56,7 +56,7 @@ describe('Add Issue Functionality Tests', () => {
     it('verify user able to create issue successfully with default setting #CRISU_002', () => {
       IssuePage.createIssue(random);
       cy.wait('@verifyCreateIssue');
-      cy.get('div.flash-tab-container div').last().should('contain', 'Issue created:').and('contain',random)
+      cy.get('div.flash-tab-container div').last().should('contain', 'Issue created:').and('contain', random)
       cy.get('div[data-id="-"] div.issue-title').first().should('contain', random);
     })
 
@@ -74,9 +74,9 @@ describe('Add Issue Functionality Tests', () => {
       cy.wait('@createIssue');
       cy.get('button.issue-form-command').click();
       cy.wait('@verifyCreateIssue');
-      cy.get('div[data-id="-"] div.issue-title').first().should("contain", random);
-      cy.get('div[data-id="-"] div.issue-stage').first().should("contain", "Backlog");
-      cy.get('span.assignees span.name').first().should("contain", user.name);
+      cy.get('div[data-id="-"] div.issue-title').should("contain", random);
+      cy.get('div[data-id="-"] div.issue-stage').should("contain", "Backlog");
+      cy.get('span.assignees span.name').should("contain", user.name);
     })
 
     it('verify user able to create issue successfully with priority setting #CRISU_005', () => {
@@ -87,6 +87,7 @@ describe('Add Issue Functionality Tests', () => {
       cy.contains('Create Issue').click({ force: true });
       cy.wait('@createIssue');
       clickOn('button.issue-form-command');
+      cy.wait('@verifyCreateIssue');
       cy.wait('@verifyCreateIssue');
       cy.get('div[data-id="-"] div.issue-title').last().should('contain', random);
     })
@@ -101,13 +102,13 @@ describe('Add Issue Functionality Tests', () => {
       cy.wait('@createIssue');
       clickOn('button.issue-form-command');
       cy.wait('@verifyCreateIssue');
-      cy.get('div[data-id="-"] div.issue-title').first().should('contain', random);
+      cy.get('div[data-id="-"] div.issue-title').should('contain', random);
       cy.get('div[data-id="-"] div.issue-stage').first().should("contain", "In Progress");
     })
   })
 
   context('At Board View', () => {
-    
+
     beforeEach(function () {
       cy.location('pathname').then((loc) => {
         if (loc == '/projects/' + user.projectId + '/issues') {
@@ -120,6 +121,7 @@ describe('Add Issue Functionality Tests', () => {
       cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
       cy.route('POST', '/projects/*/issues').as('createIssue');
       cy.route('GET', '/projects/*/cards/*?filter={}').as('verifyCreateIssue');
+      cy.route('GEt', '/projects/*/board/sizes.json').as('waitForBoardSize')
     })
 
     afterEach(function () {
@@ -134,7 +136,7 @@ describe('Add Issue Functionality Tests', () => {
     it('verify user able to create issue successfully with default setting #CRISU_002', () => {
       IssuePage.createIssue(random);
       cy.wait('@verifyCreateIssue');
-      cy.get('div[data-id="backlog"] h3.board-card-title').first().should('contain', random);
+      cy.get('div[data-id="backlog"] h3.board-card-title').should('contain', random);
     })
 
 
@@ -152,8 +154,8 @@ describe('Add Issue Functionality Tests', () => {
       cy.wait('@createIssue');
       cy.get('button.issue-form-command').click();
       cy.wait('@verifyCreateIssue');
-      cy.get('div[data-id="w8Uj"] h3.board-card-title').first().should('contain', random);
-      cy.get('div[data-id="w8Uj"] div[data-role="assignee"] span').first().should("have.attr", "data-original-title", "Assigned to " + user.name);
+      cy.get('div[data-id="w8Uj"] h3.board-card-title').should('contain', random);
+      cy.get('div[data-id="w8Uj"] div[data-role="assignee"] span').should("have.attr", "data-original-title", "Assigned to " + user.name);
     })
 
     it('verify user able to create issue successfully with priority setting #CRISU_005', () => {
@@ -165,6 +167,7 @@ describe('Add Issue Functionality Tests', () => {
       cy.wait('@createIssue');
       clickOn('button.issue-form-command');
       cy.wait('@verifyCreateIssue');
+      cy.wait('@waitForBoardSize');
       cy.get('div[data-id="backlog"] h3.board-card-title').last().should('contain', random);
     })
 
@@ -178,7 +181,7 @@ describe('Add Issue Functionality Tests', () => {
       cy.wait('@createIssue');
       clickOn('button.issue-form-command');
       cy.wait('@verifyCreateIssue');
-      cy.get('div[data-id="qh6H"] h3.board-card-title').first().should('contain', random);
+      cy.get('div[data-id="qh6H"] h3.board-card-title').should('contain', random);
     })
   })
 })
