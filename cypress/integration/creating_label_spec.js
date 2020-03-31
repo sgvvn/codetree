@@ -127,7 +127,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.get('@nameInputText').should('contain.value','Updated '+random);
     cy.get('@saveLableButton').click();
     cy.wait(4000)
-    cy.get('div.flash-tab-container div').first().should('contain', ' Labels updated')
+    cy.get('div.flash-tab-container div').last().should('contain', 'Labels updated')
     cy.get('tbody tr td.col-name').should('contain', 'Updated ' + random);
     cy.get('.col-name a').contains(random).parent().prev('td').children().should(($div) => {
       expect($div, 'Red color').to.have.attr('style', "background-color: #fbca04")
@@ -139,7 +139,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.get('.col-name a').contains(random).parent().next('td').children().last().as('deleteButton')
     cy.get('@deleteButton').trigger('mousedown').should('contain', 'Hold to delete');
     cy.wait('@verifydeletlabel');
-    cy.get('div.flash-tab-container div').first().should('contain', ' Label deleted')
+    cy.get('div.flash-tab-container div').last().should('contain', 'Label deleted')
     cy.get('tbody tr td.col-name').should('not.contain', random);
   })
 
