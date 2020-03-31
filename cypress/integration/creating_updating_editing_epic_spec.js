@@ -109,7 +109,6 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('ul.issue-form-priority-list li button[data-behavior="move-bottom"]').should('contain', "Move to bottom").click();
     cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
     cy.wait('@verifyEpic')
-    cy.wait('@updateEpicBoard')
     cy.get('div[data-id="backlog"] div h3.board-card-title').last().should('contain', random);
   })
 
@@ -118,7 +117,6 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('ul.issue-form-priority-list li button[data-behavior="move-top"]').should('contain', "Move to top").click();
     cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
     cy.wait('@verifyEpic')
-    cy.wait('@updateEpicBoard')
     cy.get('div[data-id="backlog"] div h3.board-card-title').first().should('contain', random);
   })
 
@@ -132,7 +130,6 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
-    cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
   })
 
@@ -145,7 +142,6 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
-    cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').last().should('contain', 'enhancement');
   })
 
@@ -157,7 +153,6 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
-    cy.wait('@verifyEpic')
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
   })
 
@@ -168,7 +163,6 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.xpath('//input[@id="stage_backlog"]').last().click();
     cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
-    cy.wait('@updateEpicBoard')
     cy.get('div[data-id="w8Uj"] div h3.board-card-title').should('contain', random);
   })
 
