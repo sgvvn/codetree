@@ -11,9 +11,12 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.fixture('users.json').as('usersData');
     cy.get('@usersData').then((users) => {
       user = users.grp1Collaborator;
+      random = randomString(4);
     })
   })
-
+  after(function(){
+    MilestonePage.deleteMilestone(random, 'openMilestone');
+  })
   beforeEach(function () {
     cy.server();
     sidestep_login(user.publicId);
@@ -21,7 +24,6 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     clickOn('//span[contains(text(),"Milestones")]')
     cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
     cy.route('GET', '/projects/*/views?include_counts=true&scope=milestones&view_type=').as('verifyCreateMilestone');
-    random = randomString(4);
     cy.get('table[data-container="milestones"]').as('openMilestones')
   })
 
@@ -48,18 +50,18 @@ describe('Codetree : Add Milestones functionality Tests', () => {
   it('verify add milestone with all empty field expect title #CRMIL_004', () => {
     clickOn('button.add-issue-carat');
     clickOn('a[data-component="new-milestone-controls"]');
-    setTextOn('input.milestone-title', 'Test Milestone abcd')
+    setTextOn('input.milestone-title', 'Test Milestone '+random)
     clickOn('input.milestone-submit');
     cy.wait('@verifyCreateMilestone');
     cy.get('div.flash-tab-container div').last().should('contain', 'Milestone created')
     cy.get('@openMilestones').first().within(() => {
-      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", 'abcd')
+      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
     })
   })
 
   it('verify to add milestone successfully with all data field #CRMIL_005', () => {
     cy.get('@openMilestones').first().within(() => {
-      cy.get('td.col-milestone a').contains('abcd').parent().siblings('td.col-settings').should('be.visible').click();
+      cy.get('td.col-milestone a').contains(random).parent().siblings('td.col-settings').should('be.visible').click();
       cy.xpath('//a[@aria-expanded="true"]//following::div//a[@data-behavior="edit"]').eq(0).click();
     })
     cy.get('div.dr-input div div').first().click()
@@ -76,7 +78,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
     cy.get('[value="Save Milestone"]').should('be.visible').click();
     cy.wait('@verifyCreateMilestone')
     cy.get('@openMilestones').first().within(() => {
-      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", 'abcd')
+      cy.get('tr[data-item="milestone"] td.col-milestone').last().should("contain", random)
       const date = Cypress.moment().format('MMMM') + ' 28, ' + Cypress.moment().format('YYYY');
       cy.get('tr[data-item="milestone"] td.col-due-on').last().should("contain", date)
     })
