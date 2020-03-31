@@ -126,6 +126,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.get('@nameInputText').type('Updated ' + random);
     cy.get('@nameInputText').should('contain.value','Updated '+random);
     cy.get('@saveLableButton').click();
+    cy.wait(4000)
     cy.get('div.flash-tab-container div').first().should('contain', ' Labels updated')
     cy.get('tbody tr td.col-name').should('contain', 'Updated ' + random);
     cy.get('.col-name a').contains(random).parent().prev('td').children().should(($div) => {
@@ -160,5 +161,5 @@ describe('Codetree : Add Label Functionality Tests', () => {
     cy.xpath('//span[contains(text(),"Untriaged")]').last().click({ force: true });
     cy.get('input#stage_done').last().click();
   })
-
+ 
 })
