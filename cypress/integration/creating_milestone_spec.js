@@ -14,9 +14,7 @@ describe('Codetree : Add Milestones functionality Tests', () => {
       random = randomString(4);
     })
   })
-  after(function(){
-    MilestonePage.deleteMilestone(random, 'openMilestone');
-  })
+ 
   beforeEach(function () {
     cy.server();
     sidestep_login(user.publicId);
@@ -83,7 +81,10 @@ describe('Codetree : Add Milestones functionality Tests', () => {
       cy.get('tr[data-item="milestone"] td.col-due-on').last().should("contain", date)
     })
   })
-
+  it('verify created milestone delete successfully CHGMIL_005 CHGMIL_008', () => {
+    MilestonePage.deleteMilestone(random, 'openMilestone');
+    
+})
   it('verify Due-Date validation functionality at add milestone window #CRMIL_006', () => {
     MilestonePage.setMilestone(random);
     cy.get('ul.dr-day-list').children().should('have.length', 0)
