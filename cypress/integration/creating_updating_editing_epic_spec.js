@@ -116,7 +116,8 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('div[data-id="backlog"] div h3.board-card-title').contains(random).click();
     cy.get('ul.issue-form-priority-list li button[data-behavior="move-top"]').should('contain', "Move to top").click();
     cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
-    cy.wait('@verifyEpic')
+    //cy.wait('@verifyEpic')
+    cy.wait('@updateEpicBoard')
     cy.get('div[data-id="backlog"] div h3.board-card-title').first().should('contain', random);
   })
 
@@ -172,7 +173,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
     cy.xpath('//input[@id="stage_in_progress"]').last().click();
     cy.get('button.issue-form-command').last().click();
-    //cy.wait('@verifyEpic')
+    cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
     cy.get('div[data-id="qh6H"] div h3.board-card-title').should('contain', random);
   })
