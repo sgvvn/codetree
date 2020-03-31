@@ -172,7 +172,8 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
     cy.xpath('//input[@id="stage_in_progress"]').last().click();
     cy.get('button.issue-form-command').last().click();
-    cy.wait('@verifyEpic')
+    //cy.wait('@verifyEpic')
+    cy.wait('@updateEpicBoard')
     cy.get('div[data-id="qh6H"] div h3.board-card-title').should('contain', random);
   })
 })
