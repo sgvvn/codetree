@@ -144,7 +144,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
-    cy.wait(1000)
+    cy.wait(2000)
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').last().should('contain', 'enhancement');
   })
 
@@ -156,7 +156,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
-    cy.wait(1000)
+    cy.wait(2000)
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
   })
 
