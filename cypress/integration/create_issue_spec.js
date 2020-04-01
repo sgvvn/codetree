@@ -75,7 +75,7 @@ describe('Add Issue Functionality Tests', () => {
       cy.get('button.issue-form-command').click();
       cy.wait('@verifyCreateIssue');
       cy.get('div[data-id="-"] div.issue-title').should("contain", random);
-      cy.get('div[data-id="-"] div.issue-stage').should("contain", "Backlog");
+      cy.get('div[data-id="-"] div.issue-stage').should("contain", "To Do");
       cy.get('span.assignees span.name').should("contain", user.name);
     })
 

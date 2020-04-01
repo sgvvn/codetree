@@ -131,6 +131,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
+    cy.wait(1000)
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
   })
 
@@ -143,6 +144,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
+    cy.wait(1000)
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').last().should('contain', 'enhancement');
   })
 
@@ -150,10 +152,11 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
     cy.get('a.assignees-gear-link').last().click();
-    cy.get('span.username').last().should('contain', user.name).click()
+    cy.xpath('//span[contains(text(),"'+user.name+'")]').last().click()
     clickOnElement('button.issue-form-command', 'last');
-   // cy.wait('@verifyEpic')
+    cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
+    cy.wait(1000)
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
   })
 
@@ -161,7 +164,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('h3.board-card-title').contains(random).click();
     cy.wait('@verifyepicwindow');
     cy.xpath('//a[@class="issue-form-stage-menu-toggle"]').last().click({ force: true });
-    cy.xpath('//input[@id="stage_backlog"]').last().click();
+    cy.xpath('//input[@id="stage_to_do"]').last().click();
     cy.get('button.issue-form-command').last().click();
     cy.wait('@verifyEpic')
     cy.get('div[data-id="w8Uj"] div h3.board-card-title').should('contain', random);
