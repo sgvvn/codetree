@@ -25,12 +25,7 @@ describe('Codetree : Create Project Functionality Tests', () => {
 
     it('verify fields at create project page CP_001', () => {
         cy.get('[name="name"]').should('have.attr', 'placeholder', 'My Awesome App')
-        cy.get('.option-title').should((div)=>{
-           expect(div.first(),'issue prioritize').contain('By Milestone');
-           expect(div.last(),'issue prioritize').contain('By Assignee');
-        })
-        cy.get('[name="organization_id"] option').should('contain','My Org')
-        cy.get('@createProject').should('be.visible')
+       
     })
 
     it('verify project name field Validation CP_002', () => {

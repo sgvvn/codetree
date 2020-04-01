@@ -151,7 +151,7 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('a.assignees-gear-link', 'last');
-        cy.get('span.username').last().should('contain', user.name).click()
+        cy.xpath('//span[contains(text(),"'+user.name+'")]').last().click()
         clickOnElement('button.issue-form-command', 'last');
         cy.wait('@verifyCreateIssue');
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
