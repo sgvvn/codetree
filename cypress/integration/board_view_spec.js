@@ -33,7 +33,7 @@ describe('Codetree : Board View Tests', () => {
         cy.get('[data-name="milestone"]  .dropdown  .dropdown-menu').within(()=>{
             cy.get('.menu-item-filter .text-field').type('Test data DND 1');
             cy.get('ul[data-custom-sort="milestone"] li[class="checkable-item nav-focus"] input[type="checkbox"]').click();
-            cy.get('span.dropdown.open button.button.mini').click();
+            cy.get('.filter-button-container .button').click();
         })
         cy.route('GET','/projects/*/views?milestone=Test+data+DND+1&include_counts=true&scope=issues&view_type=boards').as('verifyMilestonefilter')
         cy.wait('@verifyMilestonefilter');
