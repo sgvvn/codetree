@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 import { randomString, clickOn, setTextOn, clickOnElement, clear, sidestep_login } from './util'
-
+const MilestonePage = new (require('../pages/MilestonePage'))();
 
 describe('Codetree : Board View Tests', () => {
     var random = randomString(4);
@@ -28,17 +28,34 @@ describe('Codetree : Board View Tests', () => {
     })
 
     it('verify issues filtered by selected milestone only MIBV_004', () => {
+        clickOn('//span[contains(text(),"Milestones")]')
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
+        MilestonePage.createMilestone(random)
+        cy.xpath('//a/span[contains(text(),"Issues")]').click();
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
+        cy.contains('Add Issue').click();
+        cy.wait(400);
+        cy.get('#title').type("Test Issue " + random);
+        clickOnElement('a.issue-form-milestone-menu-toggle .octicon', "last");
+        cy.get('.issue-form-milestone-menu .dropdown-menu .menu-item-filter .text-field').last().type(random);
+        cy.get('.issue-form-milestone-menu .dropdown-menu ul li').contains(random).click();
+        cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', random);
+        cy.contains('Create Issue').click();
+        cy.route('GET', '/projects/*/cards/*?filter={}').as('createIssue');
+        cy.wait('@createIssue');
+        clickOn('button.issue-form-command');
+
         cy.contains('+ Add a filter').click();
         cy.get('label[data-filter="milestone"]').click()
         cy.get('[data-name="milestone"]  .dropdown  .dropdown-menu').within(()=>{
-            cy.get('.menu-item-filter .text-field').type('Test data DND 1');
+            cy.get('.menu-item-filter .text-field').type(random);
             cy.get('ul[data-custom-sort="milestone"] li[class="checkable-item nav-focus"] input[type="checkbox"]').click();
             cy.get('.filter-button-container .button').click();
         })
-        cy.route('GET','/projects/*/views?milestone=Test+data+DND+1&include_counts=true&scope=issues&view_type=boards').as('verifyMilestonefilter')
+        cy.route('GET','/projects/*/views?milestone=*&include_counts=true&scope=issues&view_type=boards').as('verifyMilestonefilter')
         cy.wait('@verifyMilestonefilter');
         cy.get('.issue-milestone').each(($el) => {
-              cy.wrap($el).invoke('text').should('equal', 'Test data DND 1')
+              cy.wrap($el).invoke('text').should('contain', random)
         })
     })
 
