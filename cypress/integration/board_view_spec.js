@@ -25,7 +25,7 @@ describe('Codetree : Board View Tests', () => {
             }
         })
         cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
-        cy.route('GET', '/projects/*/cards/*?filter={}').as('verifyCreateIssue');
+        cy.route('GET', '/projects/*/cards/*?filter={}').as('createIssue');
     })
     afterEach(function () {
         cy.xpath('//a/span[contains(text(),"Issues")]').click();
@@ -35,7 +35,7 @@ describe('Codetree : Board View Tests', () => {
         cy.get('span.issue-form-title').should('contain', random);
         cy.get('button.issue-form-status').should('contain', 'Open').click();
         clickOnElement('button.issue-form-command', 'last');
-        cy.wait('@verifyCreateIssue');
+        cy.wait('@createIssue');
       })
     it('verify issues filtered by selected milestone only MIBV_004', () => {
         clickOn('//span[contains(text(),"Milestones")]')
@@ -51,7 +51,6 @@ describe('Codetree : Board View Tests', () => {
         cy.get('.issue-form-milestone-menu .dropdown-menu ul li').contains(random).click();
         cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', random);
         cy.contains('Create Issue').click();
-        cy.route('GET', '/projects/*/cards/*?filter={}').as('createIssue');
         cy.wait('@createIssue');
         clickOn('button.issue-form-command');
 
