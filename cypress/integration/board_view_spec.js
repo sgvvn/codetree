@@ -1,9 +1,10 @@
 /// <reference types="Cypress" />
 import { randomString, clickOn, setTextOn, clickOnElement, clear, sidestep_login } from './util'
 const MilestonePage = new (require('../pages/MilestonePage'))();
+const LabelPage = new (require('../pages/LabelPage'))();
 
 describe('Codetree : Board View Tests', () => {
-    var random = randomString(4);
+    var random;
     var user;
     before(function () {
         cy.fixture('users.json').as('usersData');
@@ -24,8 +25,11 @@ describe('Codetree : Board View Tests', () => {
                 cy.wait('@verifyBoardView');
             }
         })
+         random = randomString(4);
         cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
         cy.route('GET', '/projects/*/cards/*?filter={}').as('createIssue');
+        cy.route('GET','/projects/*/views?include_counts=true&scope=labels&view_type=').as('verifydeletlabel');
+
     })
     afterEach(function () {
         cy.xpath('//a/span[contains(text(),"Issues")]').click();
@@ -37,6 +41,7 @@ describe('Codetree : Board View Tests', () => {
         clickOnElement('button.issue-form-command', 'last');
         cy.wait('@createIssue');
       })
+
     it('verify issues filtered by selected milestone only MIBV_004', () => {
         clickOn('//span[contains(text(),"Milestones")]')
         cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
@@ -72,18 +77,43 @@ describe('Codetree : Board View Tests', () => {
     })
 
     it('verify issues filtered by selected label only MIBV_005', () => {
+        clickOn('//span[contains(text(),"Labels")]');
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/labels')
+        setTextOn('input[name="name"]', "Test Label " + random);
+        clickOn('div.color-preview');
+        setTextOn('div.color-value-wrapper input[type="text"]', "#eb6420");
+        cy.get('input[value="Add label"]').should('be.enabled').click();
+        cy.get('tbody tr td.col-name').should('contain', random);
+
+        cy.xpath('//a/span[contains(text(),"Issues")]').click();
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
+        cy.contains('Add Issue').click();
+        cy.wait(400);
+        cy.get('#title').type("Test Issue " + random);
+        clickOnElement('div.octicon-wrapper .octicon', "first");
+        setTextOn('div.label-menu input.text-field', random)
+        cy.get('span.label-menu-label').contains(random).parent().prev('input').click();
+    cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain',random);
+    cy.contains('Create Issue').click();
+    cy.wait('@createIssue');
+    clickOn('button.issue-form-command');
+    clickOn('//a/span[contains(text(),"Issues")]');
+    cy.wait('@createIssue');
         cy.contains('+ Add a filter').click();
+        
         cy.get('label[data-filter="labels"]').click()
         cy.get('[data-name="labels"]  .dropdown  .dropdown-menu').within(()=>{
-            cy.get('.menu-item-filter .text-field').type('Test Label DND');
+            cy.get('.menu-item-filter .text-field').type(random);
             cy.get('ul .nav-focus label input').click();
             cy.get('.filter-button-container .button').click();
         })
-        cy.route('GET','/projects/*/views?labels=Test+Label+DND&include_counts=true&scope=issues&view_type=boards').as('verifyLabelFilter')
+        cy.route('GET','/projects/*/views?labels=*&include_counts=true&scope=issues&view_type=boards').as('verifyLabelFilter')
         cy.wait('@verifyLabelFilter')
         cy.get('.issue-label').each(($el) => {
-              cy.wrap($el).invoke('text').should('equal', 'Test Label DND')
+              cy.wrap($el).invoke('text').should('contain', random)
         })
+
+        LabelPage.deleteLabel(random);
     })
 
     it('verify issues filtered by selected epic only MIBV_006', () => {
