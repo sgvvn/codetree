@@ -25,8 +25,18 @@ describe('Codetree : Board View Tests', () => {
             }
         })
         cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
+        cy.route('GET', '/projects/*/cards/*?filter={}').as('verifyCreateIssue');
     })
-
+    afterEach(function () {
+        cy.xpath('//a/span[contains(text(),"Issues")]').click();
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
+        cy.get('h3.board-card-title').contains(random).click({ force: true });
+        cy.wait(400)
+        cy.get('span.issue-form-title').should('contain', random);
+        cy.get('button.issue-form-status').should('contain', 'Open').click();
+        clickOnElement('button.issue-form-command', 'last');
+        cy.wait('@verifyCreateIssue');
+      })
     it('verify issues filtered by selected milestone only MIBV_004', () => {
         clickOn('//span[contains(text(),"Milestones")]')
         cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
@@ -57,6 +67,9 @@ describe('Codetree : Board View Tests', () => {
         cy.get('.issue-milestone').each(($el) => {
               cy.wrap($el).invoke('text').should('contain', random)
         })
+        clickOn('//span[contains(text(),"Milestones")]')
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
+        MilestonePage.deleteMilestone(random, 'openMilestone');
     })
 
     it('verify issues filtered by selected label only MIBV_005', () => {
