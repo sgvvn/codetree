@@ -171,8 +171,9 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
 
     it('verify editing issue functionality for updating epic EDISSU_008', () => {
         clickOn('//span[contains(text(),"Epics")]');
-        cy.wait(3000)
-        EpicPage.createEpic(random)
+       cy.route('GET','/projects/*/views?type=epic&include_counts=true&scope=issues&view_type=boards').as('epicboard')
+       cy.wait('@epicboard')
+       EpicPage.createEpic(random)
         cy.wait('@saveEpic')
         cy.xpath('//a/span[contains(text(),"Issues")]').click();
         cy.route('GET','/projects/*/views?include_counts=true&scope=issues&view_type=boards').as('boardview')
@@ -186,11 +187,11 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
         cy.get('li.checkable-item.nav-focus').last().should('contain', random).click()
         clickOnElement('button.issue-form-command', 'last');
         cy.wait('@verifyCreateIssue');
-        cy.wait(3000)
+        cy.wait(400)
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('div.issue-epic span').should('contain', random);
         
         clickOn('//span[contains(text(),"Epics")]');
-        cy.wait(3000)
+        cy.wait('@epicboard')
         EpicPage.closeEpic(random)
     })
 

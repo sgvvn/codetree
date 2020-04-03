@@ -2,6 +2,7 @@
 import { randomString, clickOnElement, clickOn, setTextOn, sidestep_login } from './util'
 
 const EpicPage = new (require('../pages/EpicPage'))();
+const MilestonePage = new (require('../pages/MilestonePage'))();
 
 describe('Codetree : Add Epics functionality Tests', () => {
   var random;
@@ -78,7 +79,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('div.issue-form-references div #epic_issue_textcomplete').click();
     cy.get('div.issue-form-references div #epic_issue_textcomplete').type(random);
     cy.route('GET', 'projects/*/issues/autocomplete_json.json?type=all&status=&per_page=20&page=1&keyword=' + random).as('verifyAutoComplete')
-    cy.wait('@verifyAutoComplete');
+    cy.wait('@updateEpicBoard');
     cy.wait(400)
     cy.get('#edit_modal_epic_autocomplete_container ul li').first().click();
     cy.get('table[class="compact-table epic-issues"] tbody tr').first().find('td span').should('contain', random);
@@ -116,23 +117,34 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('div[data-id="backlog"] div h3.board-card-title').contains(random).click();
     cy.get('ul.issue-form-priority-list li button[data-behavior="move-top"]').should('contain', "Move to top").click();
     cy.get('.issue-title-form .issue-form-commands [data-dismiss="modal"] .octicon').click();
-    //cy.wait('@verifyEpic')
     cy.wait('@updateEpicBoard')
     cy.get('div[data-id="backlog"] div h3.board-card-title').first().should('contain', random);
   })
 
   it('verify add epic to select milestone functionality #CREPIC_009', () => {
+    clickOn('//span[contains(text(),"Milestones")]')
+    cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
+    MilestonePage.createMilestone(random)
+    clickOn('//span[contains(text(),"Epics")]');
+    cy.wait('@verifyEpic')
+    cy.wait(500)
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
     clickOnElement('a.issue-form-milestone-menu-toggle .octicon', "last");
-    cy.get('.issue-form-milestone-menu .dropdown-menu .menu-item-filter .text-field').last().type('DND 1');
-    cy.get('.issue-form-milestone-menu .dropdown-menu ul li.nav-focus').contains('DND 1').click();
-    cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', 'DND 1');
+    cy.get('.issue-form-milestone-menu .dropdown-menu .menu-item-filter .text-field').last().type(random);
+    cy.get('.issue-form-milestone-menu .dropdown-menu ul li.nav-focus').contains(random).click();
+    cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', random);
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
-    cy.wait('@updateEpicBoard')
-    cy.wait(3000)
-    cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
+    cy.route('GET','/projects/*/views?type=epic&include_counts=true&scope=issues&view_type=boards').as('epicBoard')
+    cy.wait('@epicBoard')
+    cy.wait(400)
+    cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', random);
+    
+    clickOn('//span[contains(text(),"Milestones")]')
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
+        MilestonePage.deleteMilestone(random, 'openMilestone');
+    
   })
 
   it('verify add epic to select label functionality  #CREPIC_010', () => {
@@ -143,7 +155,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('ul[class="issue-labels issue-form-labels"] li').should('contain', 'enhancement');
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
-    cy.wait('@updateEpicBoard')
+    //cy.wait('@updateEpicBoard')
     cy.wait(3000)
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').last().should('contain', 'enhancement');
   })
@@ -155,7 +167,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.xpath('//span[contains(text(),"'+user.name+'")]').last().click()
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
-    cy.wait('@updateEpicBoard')
+   // cy.wait('@updateEpicBoard')
     cy.wait(2000) 
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('span.board-card-assignee').should("have.attr", "data-original-title", "Assigned to " + user.name);
   })
