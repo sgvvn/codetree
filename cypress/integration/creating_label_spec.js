@@ -49,6 +49,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
 
   it('add and verify new label with different color setting #CRLB_002 #CRLB_003', () => {
      LabelPage.createLabel(random)
+     cy.wait('@verifydeletlabel')
     cy.get('.col-name a').contains(random).parent().prev('td').children().should(($div) => {
       expect($div, 'Red color').to.have.attr('style', "background-color: #eb6420")
     });
