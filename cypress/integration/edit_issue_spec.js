@@ -1,5 +1,7 @@
 /// <reference types="Cypress" />
 import { randomString, clickOnElement, clickOn, setTextOn, sidestep_login, clear } from './util'
+const EpicPage = new (require('../pages/EpicPage'))();
+const MilestonePage = new (require('../pages/MilestonePage'))();
 
 describe('Codetree : Edit Issue Functionality Tests', () => {
     var random = randomString(4);
@@ -124,15 +126,25 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
     })
 
     it('verify editing issue functionality for updating milestone by "DND 1" EDISSU_009', () => {
+        clickOn('//span[contains(text(),"Milestones")]')
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
+        MilestonePage.createMilestone(random)
+        cy.xpath('//a/span[contains(text(),"Issues")]').click();
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
+
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('a.issue-form-milestone-menu-toggle .octicon', "last");
-        cy.get('.issue-form-milestone-menu .dropdown-menu .menu-item-filter .text-field').last().type('DND 1');
-        cy.get('.issue-form-milestone-menu .dropdown-menu ul li.nav-focus').contains('DND 1').click();
-        cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', 'DND 1');
+        cy.get('.issue-form-milestone-menu .dropdown-menu .menu-item-filter .text-field').last().type(random);
+        cy.get('.issue-form-milestone-menu .dropdown-menu ul li.nav-focus').contains(random).click();
+        cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', random);
         cy.wait('@verifyCreateIssue');
         clickOnElement('button.issue-form-command', 'last');
-        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', 'DND 1');
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', random);
+        
+        clickOn('//span[contains(text(),"Milestones")]')
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
+        MilestonePage.deleteMilestone(random, 'openMilestone');
     })
 
     it('verify editing issue functionality for updating Label by "enhancement" EDISSU_014', () => {
@@ -158,14 +170,28 @@ describe('Codetree : Edit Issue Functionality Tests', () => {
     })
 
     it('verify editing issue functionality for updating epic EDISSU_008', () => {
+        clickOn('//span[contains(text(),"Epics")]');
+        cy.wait(3000)
+        EpicPage.createEpic(random)
+        cy.wait('@saveEpic')
+        cy.xpath('//a/span[contains(text(),"Issues")]').click();
+        cy.route('GET','/projects/*/views?include_counts=true&scope=issues&view_type=boards').as('boardview')
+        cy.wait('@boardview');
+        cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
+
         cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
         cy.get('span.issue-form-title').should('contain', random);
         clickOnElement('a.epic-gear-link', 'last');
-        cy.get('div[class="dropdown-menu epic-menu"] input[class="text-field small"]').last().type('EPIC Test Data DND')
-        cy.get('li.checkable-item.nav-focus').last().should('contain', 'EPIC Test Data DND').click()
+        cy.get('div[class="dropdown-menu epic-menu"] input[class="text-field small"]').last().type(random)
+        cy.get('li.checkable-item.nav-focus').last().should('contain', random).click()
         clickOnElement('button.issue-form-command', 'last');
         cy.wait('@verifyCreateIssue');
-        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('div.issue-epic span').should('contain', 'EPIC Test Data DND');
+        cy.wait(3000)
+        cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('div.issue-epic span').should('contain', random);
+        
+        clickOn('//span[contains(text(),"Epics")]');
+        cy.wait(3000)
+        EpicPage.closeEpic(random)
     })
 
     it('verify editing issue functionality for updating priority EDISSU_010', () => {
