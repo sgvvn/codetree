@@ -80,6 +80,7 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('div.issue-form-references div #epic_issue_textcomplete').type(random);
     cy.route('GET', 'projects/*/issues/autocomplete_json.json?type=all&status=&per_page=20&page=1&keyword=' + random).as('verifyAutoComplete')
     cy.wait('@updateEpicBoard');
+    cy.wait('@verifyAutoComplete');
     cy.wait(400)
     cy.get('#edit_modal_epic_autocomplete_container ul li').first().click();
     cy.get('table[class="compact-table epic-issues"] tbody tr').first().find('td span').should('contain', random);
@@ -126,7 +127,8 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.location('pathname').should('include', 'projects/' + user.projectId + '/milestones')
     MilestonePage.createMilestone(random)
     clickOn('//span[contains(text(),"Epics")]');
-    cy.wait('@verifyEpic')
+    cy.route('GET','/projects/*/views?type=epic&include_counts=true&scope=issues&view_type=boards').as('epicBoard')
+    cy.wait('@epicBoard')
     cy.wait(500)
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).click();
     cy.get('span.issue-form-title').should('contain', random);
@@ -136,7 +138,6 @@ describe('Codetree : Add Epics functionality Tests', () => {
     cy.get('a.issue-form-milestone-menu-toggle .title').should('contain', random);
     clickOnElement('button.issue-form-command', 'last');
     cy.wait('@verifyEpic')
-    cy.route('GET','/projects/*/views?type=epic&include_counts=true&scope=issues&view_type=boards').as('epicBoard')
     cy.wait('@epicBoard')
     cy.wait(400)
     cy.get('div[data-id="backlog"] h3.board-card-title').contains(random).parent().find('ul.issue-labels li').should('contain', random);
