@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 
 import { randomString, clickOn, setTextOn, clickOnElement, clear, sidestep_login } from './util'
-
+const LabelPage = new (require('../pages/LabelPage'))();
 describe('Codetree : Add Label Functionality Tests', () => {
   var random = randomString(4);
 
@@ -48,13 +48,7 @@ describe('Codetree : Add Label Functionality Tests', () => {
   })
 
   it('add and verify new label with different color setting #CRLB_002 #CRLB_003', () => {
-    clickOn('//span[contains(text(),"Labels")]');
-    cy.location('pathname').should('include', 'projects/' + user.projectId + '/labels')
-    setTextOn('input[name="name"]', "Test Label " + random);
-    clickOn('div.color-preview');
-    setTextOn('div.color-value-wrapper input[type="text"]', "#eb6420");
-    cy.get('input[value="Add label"]').should('be.enabled').click();
-    cy.get('tbody tr td.col-name').should('contain', random);
+     LabelPage.createLabel(random)
     cy.get('.col-name a').contains(random).parent().prev('td').children().should(($div) => {
       expect($div, 'Red color').to.have.attr('style', "background-color: #eb6420")
     });
@@ -134,12 +128,9 @@ describe('Codetree : Add Label Functionality Tests', () => {
     })
 
   it('verify created label delete successfully CRLB_007 CRLB_008', () => {
-    clickOn('//span[contains(text(),"Labels")]');
-    cy.get('.col-name a').contains(random).parent().next('td').children().last().as('deleteButton')
-    cy.get('@deleteButton').trigger('mousedown').should('contain', 'Hold to delete');
-    cy.wait('@verifydeletlabel');
-    cy.get('div.flash-tab-container div').last().should('contain', 'Label deleted')
-    cy.get('tbody tr td.col-name').should('not.contain', random);
+
+    LabelPage.deleteLabel(random);
+
   })
 
   it('verify deleted lable removed from created issue and change stage done CRLB_012', () => {

@@ -80,14 +80,7 @@ describe('Codetree : Board View Tests', () => {
     })
 
     it('verify issues filtered by selected label only MIBV_005', () => {
-        clickOn('//span[contains(text(),"Labels")]');
-        cy.location('pathname').should('include', 'projects/' + user.projectId + '/labels')
-        setTextOn('input[name="name"]', "Test Label " + random);
-        clickOn('div.color-preview');
-        setTextOn('div.color-value-wrapper input[type="text"]', "#eb6420");
-        cy.get('input[value="Add label"]').should('be.enabled').click();
-        cy.get('tbody tr td.col-name').should('contain', random);
-
+        LabelPage.createLabel(random)
         cy.xpath('//a/span[contains(text(),"Issues")]').click();
         cy.location('pathname').should('include', 'projects/' + user.projectId + '/board')
         cy.contains('Add Issue').click();
