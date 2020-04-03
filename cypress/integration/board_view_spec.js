@@ -102,7 +102,7 @@ describe('Codetree : Board View Tests', () => {
     clickOn('button.issue-form-command');
     clickOn('//a/span[contains(text(),"Issues")]');
     cy.wait('@verifyEpic');
-    cy.wait(400)
+    cy.wait(600)
         cy.contains('+ Add a filter').click();   
         cy.get('label[data-filter="labels"]').click()
         cy.get('[data-name="labels"]  .dropdown  .dropdown-menu').within(()=>{
